@@ -13,7 +13,7 @@ class MtgTagLib {
     def renderText = { attrs ->
         String text = attrs.text
         Pattern pattern = ~/\{.+?\}/
-        Matcher m = pattern.matcher( text )
+        Matcher m = pattern.matcher( text ?: "" )
         while( m.find() ) {
             def symbol = m.group()
             Mana mana = Mana.findBySymbol( symbol.replace("/","") )
@@ -25,6 +25,41 @@ class MtgTagLib {
                 text = text.replace( symbol, manaImage )
             }
         }
-        out << text.replace("\n","<br>")
+        out << text?.replace("\n","<br>")
+    }
+    
+    def renderResult = { attrs ->
+        def result = attrs.result
+        if( result instanceof Card ) {
+            def card = Card.read(result.id)
+            def expansionCard = card.expansionCards.iterator()[0]
+            out << """
+                <td>
+                    <img src="http://mtgimage.com/set/${expansionCard.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${card.name}.jpg" width="200px">
+                </td>
+                <td style="padding: 10px 10px;">
+                    ${g.link( controller:"Card", action:"show", id:"${card.id}", card.name )}<br>
+                """
+            expansionCard.types.sort{ a,b -> a.id <=> b.id }.each {
+                out << "${it.name} "
+            }
+            out << "<br>"
+            out << mtg.renderText( text:expansionCard.text )
+            out << "<br>"
+            if( card.power && card.toughness ) {
+                out << "${card.power} / ${card.toughness}<br>"
+            } else if( card.loyalty ) {
+                out << "Loyalty: ${card.loyalty}<br>"
+            }
+            out << "</td>"
+        } else if( result instanceof ExpansionCard ) {
+            
+        } else if( result instanceof Expansion ) {
+            
+        }else if( result instanceof Illustrator ) {
+            
+        }else{
+            
+        }
     }
 }

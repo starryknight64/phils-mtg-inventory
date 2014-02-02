@@ -253,6 +253,7 @@ class ImportDBController {
                         }
                     
                         if( expansionCard.isDirty() ) {
+                            status += out "        updated!"
                             expansionCard.save()
                         }
                     }

@@ -42,7 +42,7 @@
                                     <span id="manas-label" class="property-label"><g:message code="expansionCard.manas.label" default="Manas" /></span>
 
                                     <span class="property-value" aria-labelledby="manas-label">
-                                        <g:each in="${expansionCardInstance.manas}" var="m">
+                                        <g:each in="${expansionCardInstance.manas.sort{ a,b -> b.id <=> a.id }}" var="m">
                                             <g:link controller="mana" action="show" id="${m.id}"><g:img dir="images/mana" file="${m.symbol.replace('{','').replace('}','')}.gif" style="max-height: 20px; max-width: 20px"/></g:link>
                                         </g:each>
                                     </span>
