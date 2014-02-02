@@ -76,7 +76,7 @@
                                 <li class="fieldcontain">
                                     <span id="expansion-label" class="property-label"><g:message code="expansionCard.expansion.label" default="Expansion" /></span>
 
-                                    <span class="property-value" aria-labelledby="expansion-label"><g:link controller="expansion" action="show" id="${expansionCardInstance?.expansion?.id}"><g:img dir="images/expansions" file="${expansionCardInstance.expansion.name.replace('&','and').replace(':','').replace(' Core Set','').replace('"','')}_${expansionCardInstance.rarity.name.replace("Basic Land","Common")}.gif" style="max-width: 30px; max-height: 20px;"/></g:link> <g:link controller="expansion" action="show" id="${expansionCardInstance?.expansion?.id}">${expansionCardInstance?.expansion?.encodeAsHTML()}</g:link></span>
+                                    <span class="property-value" aria-labelledby="expansion-label"><g:link controller="expansion" action="show" id="${expansionCardInstance?.expansion?.id}"><g:img dir="images/expansions" file="${expansionCardInstance.expansion.name.replace('&','and').replace(':','').replace(' Core Set','').replace('"','')}_${expansionCardInstance.rarity.name.replace("Basic Land","Common").replace("Mythic Rare","Mythic")}.gif" style="max-width: 30px; max-height: 20px;"/></g:link> <g:link controller="expansion" action="show" id="${expansionCardInstance?.expansion?.id}">${expansionCardInstance?.expansion?.encodeAsHTML()}</g:link></span>
 
                                 </li>
                             </g:if>
@@ -85,7 +85,7 @@
                                 <li class="fieldcontain">
                                     <span id="text-label" class="property-label"><g:message code="card.text.label" default="Text" /></span>
 
-                                    <span class="property-value" aria-labelledby="text-label">${expansionCardInstance.text.replace("\n","<br>")}</span>
+                                    <span class="property-value" aria-labelledby="text-label"><mtg:renderText text="${expansionCardInstance.text}" /></span>
 
                                 </li>
                             </g:if>
@@ -188,7 +188,7 @@
                                             <table>
                                                 <g:each in="${cardInstance.expansionCards.sort{ a,b -> b.expansion.releaseDate <=> a.expansion.releaseDate}}" var="e">
                                                 <g:if test="${expansionCardInstance != e}">
-                                                        <tr style="height: 27px;"><td style="text-align: right; width: 40px;"><g:link controller="expansionCard" action="show" id="${e.id}"><g:img dir="images/expansions" file="${e.expansion.name.replace('&','and').replace(':','').replace(' Core Set','').replace('"','')}_${e.rarity.name.replace("Basic Land","Common")}.gif" style="max-width: 30px; max-height: 20px; padding-right: 10px;"/></g:link></td><td><g:link controller="expansionCard" action="show" id="${e.id}">${e?.expansion?.encodeAsHTML()}</g:link></td></tr>
+                                                        <tr style="height: 27px;"><td style="text-align: right; width: 40px;"><g:link controller="expansionCard" action="show" id="${e.id}"><g:img dir="images/expansions" file="${e.expansion.name.replace('&','and').replace(':','').replace(' Core Set','').replace('"','')}_${e.rarity.name.replace("Basic Land","Common").replace("Mythic Rare","Mythic")}.gif" style="max-width: 30px; max-height: 20px; padding-right: 10px;"/></g:link></td><td><g:link controller="expansionCard" action="show" id="${e.id}">${e?.expansion?.encodeAsHTML()}</g:link></td></tr>
                                                     </g:if>
                                                 </g:each>
                                             </table>
