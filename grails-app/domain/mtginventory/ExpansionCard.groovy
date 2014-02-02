@@ -1,8 +1,10 @@
 package mtginventory
 
 class ExpansionCard {
+
     Card card
     Expansion expansion
+    String text
     String flavorText
     CardRarity rarity
     Illustrator illustrator
@@ -18,16 +20,21 @@ class ExpansionCard {
         types: CardType]
 
     static mapping = {
+        text sqlType: "text"
         flavorText sqlType: "text"
+        manas cascade: "all-delete-orphan"
+        types cascade: "all-delete-orphan"
     }
 
     static constraints = {
-        card unique: ['card','expansion']
+        card unique: ['card','expansion','collectorNumber']
+        text nullable: true
         flavorText nullable: true
         priceLow nullable: true
         priceMid nullable: true
         priceHigh nullable: true
         variation nullable: true
+        collectorNumber nullable: true
     }
 
     String toString() {

@@ -32,15 +32,6 @@
 				</li>
 				</g:if>
 			
-				<g:if test="${cardInstance?.text}">
-				<li class="fieldcontain">
-					<span id="text-label" class="property-label"><g:message code="card.text.label" default="Text" /></span>
-					
-						<span class="property-value" aria-labelledby="text-label"><g:fieldValue bean="${cardInstance}" field="text"/></span>
-					
-				</li>
-				</g:if>
-			
 				<g:if test="${cardInstance?.power}">
 				<li class="fieldcontain">
 					<span id="power-label" class="property-label"><g:message code="card.power.label" default="Power" /></span>

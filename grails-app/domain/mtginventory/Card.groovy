@@ -1,9 +1,11 @@
 package mtginventory
 
 class Card {
+    static searchable = {
+        spellCheck "include"
+    }
 
     String name
-    String text
     String power
     String toughness
     String loyalty
@@ -11,12 +13,10 @@ class Card {
     static hasMany = [expansionCards: ExpansionCard]
 
     static mapping = {
-        text sqlType: "text"
     }
 
     static constraints = {
-        name unique: true
-        text nullable: true
+        name unique: ["power", "toughness", "loyalty"]
         power nullable: true
         toughness nullable: true
         loyalty nullable: true

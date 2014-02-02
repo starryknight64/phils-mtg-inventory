@@ -12,7 +12,6 @@ class Mana {
     static hasMany = [colors: ManaColor]
 
     static constraints = {
-        name unique: true
         symbol unique: true
     }
 

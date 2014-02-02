@@ -1,7 +1,10 @@
 import mtginventory.*
+import groovyx.net.http.RESTClient
+import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.ContentType
 
 class BootStrap {
-
+    
     def init = { servletContext ->
         // Check whether the test data already exists.
         if (!Mana.count()) {
@@ -74,7 +77,21 @@ class BootStrap {
             new CardType(name:"Sorcery", type: normalType).save()
             new CardType(name:"Tribal", type: normalType).save()
             new CardType(name:"Vanguard", type: normalType).save()
+        }
 
+        def mtgJSON = new HTTPBuilder("http://mtgjson.com/json/")
+        System.out.println "Checking version of DB from mtgjson.com ..."
+        def mtgJSONVersion = mtgJSON.get( path: "version.json", contentType: ContentType.TEXT )
+        def dbVersion = Meta.findByName("version") ?: new Meta(name:"version", value:"").save()
+        if( dbVersion.value != mtgJSONVersion.str ) {
+            System.out.println "Version of DB was $mtgJSONVersion.str, which differs from internal DB of $dbVersion.value!"
+            dbVersion.value = mtgJSONVersion.str
+            dbVersion.save()
+            Thread.start {
+                new ImportDBController().doImport( null, true )
+            }
+        } else {
+            System.out.println "Versions match!"
         }
     }
     def destroy = {

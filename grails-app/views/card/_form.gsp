@@ -10,14 +10,6 @@
 	<g:textField name="name" value="${cardInstance?.name}"/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: cardInstance, field: 'text', 'error')} ">
-	<label for="text">
-		<g:message code="card.text.label" default="Text" />
-		
-	</label>
-	<g:textField name="text" value="${cardInstance?.text}"/>
-</div>
-
 <div class="fieldcontain ${hasErrors(bean: cardInstance, field: 'power', 'error')} ">
 	<label for="power">
 		<g:message code="card.power.label" default="Power" />

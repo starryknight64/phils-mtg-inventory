@@ -1,6 +1,9 @@
 package mtginventory
 
 class Expansion {
+    static searchable = {
+        spellCheck "include"
+    }
 
     String name
     String symbol
@@ -17,6 +20,10 @@ class Expansion {
         preReleaseDate nullable: true
         releaseDate nullable: true
         totalCards nullable: true
+    }
+    
+    ExpansionCode code( String code ) {
+        expansionCodes.find{ it.code == code }
     }
 
     String toString() {

@@ -1,60 +1,50 @@
 package mtginventory
 
-import mtginventory.Card
-import mtginventory.CardRarity
-import mtginventory.CardType
-import mtginventory.CardTypeType
-import mtginventory.Expansion
-import mtginventory.ExpansionCode
-import mtginventory.Illustrator
-import mtginventory.Inventory
-import mtginventory.InventoryCard
-import mtginventory.Mana
-import mtginventory.ManaColor
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import groovy.json.JsonSlurper
+import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.ContentType
 
 class ImportDBController {
 
-    Set<CardType> getTypes( String typeLine ) {
-        Set types = []
-        boolean isPlane = false
-        boolean onlySubTypesLeft = false
-        CardTypeType subTypeType = CardTypeType.findByName("subtype")
-        String planeSubType = ""
-
-        for( String it : typeLine.split( " " ) ) {
-            if( it.matches( "[-—]" ) ) {
-                onlySubTypesLeft = true
-                continue
-            }
-
-            if( isPlane && onlySubTypesLeft ) {
-                planeSubTypes += "$it ";
-                continue
-            }
-
-            CardType type = CardType.findByName( it ) ?: new CardType(name: it, type: subTypeType).save(flush:true);
-            if( type.name == "plane" ) {
-                isPlane = true
-            }
-            types.add( type )
+    private Set<CardType> getTypes2( List superTypes, List types, List subTypes ) {
+        Set allTypes = []
+        CardTypeType typeType = CardTypeType.findByName("Supertype")
+        superTypes?.each {
+            CardType type = CardType.findByName( it ) ?: new CardType(name: it, type: typeType).save(flush:true)
+            allTypes.add(type)
         }
-
-        if( planeSubType != "" ) {
-            planeSubType = planeSubType.trim()
-            types.add( CardType.findByName( planeSubType ) ?: new CardType(name: planeSubType, type: subTypeType).save(flush:true) );
+        typeType = CardTypeType.findByName("Type")
+        types?.each {
+            CardType type = CardType.findByName( it ) ?: new CardType(name: it, type: typeType).save(flush:true)
+            allTypes.add(type)
         }
-
-        return types
+        typeType = CardTypeType.findByName("Subtype")
+        subTypes?.each {
+            CardType type = CardType.findByName( it ) ?: new CardType(name: it, type: typeType).save(flush:true)
+            allTypes.add(type)
+        }
+        return allTypes
     }
 
     List<Mana> getManaCost( String manaCost ) {
         Pattern pattern = ~/\{.+?\}/
-        Matcher m = pattern.matcher( manaCost )
+        Matcher m = pattern.matcher( manaCost.replace( "/", "" ) )
         List manas = []
         while( m.find() ) {
-            Mana mana = Mana.findBySymbol( m.group() ) ?: new Mana(name:"?",symbol:m.group(),cmc:"?").addToColors(name:"colorless").save(flush:true)
+            def manaSymbol = m.group()
+            Mana mana = Mana.findBySymbol( manaSymbol )
+            if( !mana ) {
+                ManaColor colorless = ManaColor.findByName("colorless")
+                mana = new Mana(name:"?",symbol:manaSymbol,cmc:"?")
+                mana.addToColors(colorless)
+                if (!mana.save()) {
+                    mana.errors.each {
+                        println it
+                    }
+                }
+            }
             manas.add( mana )
         }
         return manas
@@ -65,10 +55,10 @@ class ImportDBController {
         Illustrator artist2 = Illustrator.get(id2)
         artist1.addToAliases( artist2 )
         artist1.removeFromNotAliases( artist2 )
-        artist1.save(flush:true)
+        artist1.save()
         artist2.addToAliases( artist1 )
         artist2.removeFromNotAliases( artist1 )
-        artist2.save(flush:true)
+        artist2.save()
         render "done"
     }
 
@@ -77,14 +67,15 @@ class ImportDBController {
         Illustrator artist2 = Illustrator.get(id2)
         artist1.addToNotAliases( artist2 )
         artist1.removeFromAliases( artist2 )
-        artist1.save(flush:true)
+        artist1.save()
         artist2.addToNotAliases( artist1 )
         artist2.removeFromAliases( artist1 )
-        artist2.save(flush:true)
+        artist2.save()
         render "done"
     }
 
     def checkArtists() {
+        def status = ""
         def artists = Illustrator.list()
         for( int i=0; i<artists.size(); i++ ) {
             def artist = artists[i]
@@ -110,136 +101,170 @@ class ImportDBController {
                         def artist2 = artists[j]
                         def artistName2 = artist2.name
                         if( j != i && artistName2.contains( it ) && !artist?.aliases?.contains( artist2 ) && !artist?.notAliases?.contains( artist2 ) ) {
-                            render "<a href='/MtGInventory/importDB/addArtistAlias?id1=${artist.id}&id2=${artist2.id}'>Add Alias</a>&nbsp;&nbsp;&nbsp;&nbsp;"
-                            render "<a href='/MtGInventory/importDB/addArtistNonAlias?id1=${artist.id}&id2=${artist2.id}'>Add Not Alias</a>&nbsp;&nbsp;&nbsp;&nbsp;"
-                            render "Possible duplicate: \"${artist.id} - ${artist.name}\" and \"${artist2.id} - ${artist2.name}\"<br>"
+                            status += out "<a href='/MtGInventory/importDB/addArtistAlias?id1=${artist.id}&id2=${artist2.id}'>Add Alias</a>&nbsp;&nbsp;&nbsp;&nbsp;"
+                            status += out "<a href='/MtGInventory/importDB/addArtistNonAlias?id1=${artist.id}&id2=${artist2.id}'>Add Not Alias</a>&nbsp;&nbsp;&nbsp;&nbsp;"
+                            status += out "Possible duplicate: \"${artist.id} - ${artist.name}\" and \"${artist2.id} - ${artist2.name}\"<br>"
                         }
                     }
                 }
             }
         }
-        render "done!"
+        status += out "done!"
+        return status
     }
+    
+    def out( String text ) {
+        System.out.println text
+        render text
+        text
+    }
+    
+    //    SET foreign_key_checks = 0;
+    //    DROP TABLE card;
+    //    DROP TABLE expansion_card;
+    //    DROP TABLE expansion_card_card_type;
+    //    DROP TABLE expansion_card_mana;
 
-    def index() {
-        int i=0
-        int col_name = i++
-        int col_set = i++
-        int col_set_code = i++
-        int col_id = i++
-        int col_type = i++
-        int col_power = i++
-        int col_toughness = i++
-        int col_loyalty = i++
-        int col_manacost = i++
-        int col_converted_manacost = i++
-        int col_artist = i++
-        int col_flavor = i++
-        int col_color = i++
-        int col_generated_mana = i++
-        int col_number = i++
-        int col_rarity = i++
-        int col_rating = i++
-        int col_ruling = i++
-        int col_variation = i++
-        int col_ability = i++
-        int col_pricing_low = i++
-        int col_pricing_mid = i++
-        int col_pricing_high = i++
-        int col_watermark = i++
-        int col_back_id = i++
-        int col_number_int = i++
-        int col_name_CN = i++
-        int col_name_TW = i++
-        int col_name_FR = i++
-        int col_name_DE = i++
-        int col_name_IT = i++
-        int col_name_JP = i++
-        int col_name_PT = i++
-        int col_name_RU = i++
-        int col_name_ES = i++
-        int col_name_KO = i++
-        int col_fully_handled = i++
-        int col_custom_sort = i++
-        int col_legality_Block = i++
-        int col_legality_Standard = i++
-        int col_legality_Extended = i++
-        int col_legality_Modern = i++
-        int col_legality_Legacy = i++
-        int col_legality_Vintage = i++
-        int col_legality_Highlander = i++
-        int col_legality_French_Commander = i++
-        int col_legality_Commander = i++
-        int col_legality_Peasant = i++
-        int col_legality_Pauper = i++
+    def doImport( String updateThisExp, Boolean forceUpdate ) {
+        def status = ""
+        def mtgJSON = new HTTPBuilder("http://mtgjson.com/json/")
+        
+        status += out "Getting data from mtgjson.com ...<br>"
+        def allSetsJSON = mtgJSON.get( path: "${updateThisExp ?: "AllSets"}-x.json", contentType: ContentType.TEXT )
+                
+        status += out "Converting data to JSON object...<br>"
+        def allSets = new JsonSlurper().parseText(allSetsJSON.str)
+        if( updateThisExp ) {
+            allSets = [allSets]
+        }
+        //        InputStream inputFile = getClass().classLoader.getResourceAsStream("10E-x.json")
+        //        def oneSet = new JsonSlurper().parseText(inputFile.text)
+        //                def allSets = new JsonSlurper().parseText(inputFile.text)
+        //        def allSets = [oneSet]
+        allSets.each{ set ->
+            def expansionJSON = updateThisExp ? set : set.value
+            def expansionName = expansionJSON.name
+            def expansionCode = expansionJSON.code
+            def expansionReleaseDate = Date.parse("yyyy-MM-dd", expansionJSON.releaseDate)
+            def expansionCards = expansionJSON.cards
+            status += out "$expansionName<br>"
 
-        //load and split the file
-        InputStream inputFile = getClass().classLoader.getResourceAsStream("Gatherer Extracted DB.csv")
-        String[] lines  = inputFile.text.split("\r")
-
-        int startIndex = 2
-        for( i = startIndex > 2 ? startIndex : 2; i<lines.length; i++ ) {
-            String[] row = lines[i].split("\\|\\|");
-            String cardName = row[col_name]
-            String expansionName = row[col_set]
-            String expansionCode = row[col_set_code]
-
-            String typeLine = row[col_type]
-            String power = row[col_power] ?: null
-            String toughness = row[col_toughness] ?: null
-            String loyalty = row[col_loyalty] ?: null
-            String manacost = row[col_manacost]
-            String illustrator = row[col_artist]
-            String flavorText = row[col_flavor] ?: null
-            String number = row[col_number]
-            String rarity = row[col_rarity]
-            String text = row[col_ability] ?: null
-            String priceLow = row[col_pricing_low] ?: null
-            String priceMid = row[col_pricing_mid] ?: null
-            String priceHigh = row[col_pricing_high] ?: null
-            String variation = row[col_variation] ?: null
-
-            Expansion expansion = Expansion.findByName( expansionName ) ?: new Expansion(name: expansionName).save()
-            ExpansionCode expCode = ExpansionCode.findByCode( expansionCode ) ?: new ExpansionCode( author: "gatherer", code: expansionCode, expansion: expansion ).save()
-            List<Card> cards = []
-            if( !cardName.contains(" // ")){
-                Card card = Card.findByName( cardName ) ?: new Card(name:cardName,text:text,power:power,toughness:toughness,loyalty:loyalty).save()
-                cards.add(card)
-            }else{
-                String[] cardNames = cardName.split(" // ")
-                cardNames.each{
-                    String fullCardName = "${cardName} ($it)"
-                    Card card = Card.findByName( fullCardName ) ?: new Card(name:fullCardName,text:text,power:power,toughness:toughness,loyalty:loyalty).save()
-                    cards.add(card)
+            Expansion expansion = Expansion.findByName( expansionName ) ?: new Expansion(name: expansionName, releaseDate: expansionReleaseDate, totalCards: expansionCards?.size()).save()
+            if( forceUpdate ) {
+                if( expansion.releaseDate != expansionReleaseDate ) {
+                    expansion.releaseDate = expansionReleaseDate
+                }
+                if( expansion.totalCards != expansionCards?.size() ) {
+                    expansion.totalCards = expansionCards?.size()
+                }
+                if( expansion.isDirty() ) {
+                    expansion.save()
                 }
             }
+            
+            ExpansionCode expCode = ExpansionCode.findByCode( expansionCode ) ?: new ExpansionCode( author: "mtgsalvation", code: expansionCode, expansion: expansion ).save()
 
-            String letter = null
-            String[] manaCostArray = manacost.split(" // ")
-            cards.eachWithIndex{ card, index ->
-                String actualCollectorNumber = collectorNumber
-                String actualManaCost = manacost
-                if( cardName.contains(" // " ) ) {
-                    letter = letter?.next() ?: "a"
-                    actualCollectorNumber = "$collectorNumber$letter"
-                    actualManaCost = manaCostArray[index]
+            for( Map expCard : expansionCards ) {
+                def cardName = expCard.get( "name" )
+                def manaCost = expCard.get( "manaCost" ) ?: ""
+                def superTypes = expCard.get( "supertypes" )
+                def types = expCard.get( "types" )
+                def subTypes = expCard.get( "subtypes" )
+                def rarity = expCard.get( "rarity" )
+                def text = expCard.get( "text" )
+                def flavorText = expCard.get( "flavor" )
+                def artist = expCard.get( "artist" )
+                def number = expCard.get( "number" )
+                def power = expCard.get( "power" )
+                def toughness = expCard.get( "toughness" )
+                def loyalty = expCard.get( "loyalty" )
+                status += out "    $cardName<br>"
+
+                Card card = Card.findByNameAndPowerAndToughnessAndLoyalty( cardName, power, toughness, loyalty )
+                if( !card ) {
+                    Card card2 = Card.findByName( cardName )
+                    if( card2 ) {
+                        status += out "        Found duplicate card of same name!<br>"
+                    }
+                    card = new Card(name:cardName,power:power,toughness:toughness,loyalty:loyalty).save()
                 }
-                if( expansion.expansionCards?.find{ it.card == card && it.collectorNumber == actualCollectorNumber && it.variation == variation } == null ) {
-                    Illustrator artist = Illustrator.findByName( illustrator ) ?: new Illustrator(name: illustrator).save()
-                    List<Mana> totalManaCost = getManaCost( actualManaCost )
-                    CardRarity cardRarity = CardRarity.findByAcronym( rarity ) ?: new CardRarity(name: "?", acronym: rarity).save()
-                    Set<CardType> types = getTypes( typeLine )
-                    ExpansionCard expansionCard = new ExpansionCard(card: card,expansion: expansion, flavorText:flavorText,rarity:cardRarity,illustrator:artist,collectorNumber: number,variation:variation,priceLow: priceLow,priceMid: priceMid, priceHigh: priceHigh)
+
+                if( expansion.expansionCards?.find{ it.card == card && it.collectorNumber == number } == null ) {
+                    status += out "        Not found! Adding to DB...<br>"
+                    Illustrator illustrator = Illustrator.findByName( artist ) ?: new Illustrator(name: artist).save()
+                    List<Mana> totalManaCost = getManaCost( manaCost )
+                    CardRarity cardRarity = CardRarity.findByName( rarity ) ?: new CardRarity(name: rarity, acronym: "?").save()
+                    Set<CardType> cardTypes = getTypes2( superTypes, types, subTypes )
+                    ExpansionCard expansionCard = new ExpansionCard(card: card,expansion: expansion, text:text, flavorText:flavorText,rarity:cardRarity,illustrator:illustrator,collectorNumber: number)
                     totalManaCost.each {
                         expansionCard.addToManas( it )
                     }
-                    types.each {
+                    cardTypes.each {
                         expansionCard.addToTypes( it )
                     }
-                    expansionCard.save()
+                    if (!expansionCard.save()) {
+                        expansionCard.errors.each {
+                            println it
+                        }
+                    }
+                } else if( forceUpdate ) {
+                    ExpansionCard expansionCard = ExpansionCard.findByCardAndExpansionAndCollectorNumber( card, expansion, number )
+                    if( !expansionCard ) {
+                        status += out "        Couldn't find ExpansionCard for '$card' in '$expansion' with collector number '$number'!<br>"
+                    } else {
+                        if( expansionCard.text != text ) {
+                            expansionCard.text = text
+                        }
+                        Illustrator illustrator = Illustrator.findByName( artist ) ?: new Illustrator(name: artist).save()
+                        if( expansionCard.illustrator != illustrator ) {
+                            expansionCard.illustrator = illustrator
+                        }
+                        List<Mana> totalManaCost = getManaCost( manaCost )
+                        def updateManaCost = false
+                        for( Mana mana : totalManaCost ) {
+                            if( !expansionCard.manas?.contains( mana ) ) {
+                                updateManaCost = true
+                                break
+                            }
+                        }
+                        if( updateManaCost ) {
+                            expansionCard.manas?.clear()
+                            totalManaCost.each {
+                                expansionCard.addToManas( it )
+                            }
+                        }
+                        CardRarity cardRarity = CardRarity.findByName( rarity ) ?: new CardRarity(name: rarity, acronym: "?").save()
+                        if( expansionCard.rarity != cardRarity ) {
+                            expansionCard.rarity = cardRarity
+                        }
+                        def updateCardTypes = false
+                        Set<CardType> cardTypes = getTypes2( superTypes, types, subTypes )
+                        for( CardType type : cardTypes ) {
+                            if( !expansionCard.types?.contains( type ) ) {
+                                updateCardTypes = true
+                                break
+                            }
+                        }
+                        if( updateCardTypes ) {
+                            expansionCard.types?.clear()
+                            cardTypes.each {
+                                expansionCard.addToTypes( it )
+                            }
+                        }
+                    
+                        if( expansionCard.isDirty() ) {
+                            expansionCard.save()
+                        }
+                    }
                 }
             }
         }
-        render "done!"
+        status += out "done"
+        return status
+    }
+    
+    def index() {
+        render "<a href='/MtGInventory/importDB/checkArtists'>Check Artists</a><br>"
+        render "<a href='/MtGInventory/importDB/doImport?forceUpdate=true'>Do Import</a><br>"
     }
 }

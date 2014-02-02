@@ -1,3 +1,7 @@
+table #searchForm {
+    padding-top: 25px;
+}
+
 /* FONT STACK */
 body,
 input, select, textarea {
@@ -206,8 +210,9 @@ img {
 
 fieldset,
 .property-list {
-	margin: 0.6em 1.25em 0 1.25em;
-	padding: 0.3em 1.8em 1.25em;
+	/*margin: 0.6em 1.25em 0 1.25em;*/
+/*	padding: 0.3em 1.8em 1.25em;*/
+        padding: 0px;
 	position: relative;
 	zoom: 1;
 	border: none;
@@ -418,8 +423,8 @@ tr>td:last-child, tr>th:last-child {
 }
 
 td, th {
-	line-height: 1.5em;
-	padding: 0.5em 0.6em;
+	/*line-height: 1.5em;*/
+/*	padding: 0.5em 0.6em;*/
 	text-align: left;
 	vertical-align: top;
 }

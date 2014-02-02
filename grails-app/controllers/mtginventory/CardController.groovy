@@ -37,8 +37,7 @@ class CardController {
             redirect(action: "list")
             return
         }
-
-        [cardInstance: cardInstance]
+        redirect(controller: "ExpansionCard", action: "show", id: cardInstance.expansionCards.iterator()[0].id)
     }
 
     def edit(Long id) {

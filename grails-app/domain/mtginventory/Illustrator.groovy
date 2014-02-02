@@ -1,6 +1,9 @@
 package mtginventory
 
 class Illustrator {
+    static searchable = {
+        spellCheck "include"
+    }
 
     String name
 
