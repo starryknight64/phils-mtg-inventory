@@ -1,5 +1,6 @@
 package mtginventory
 
+import java.util.Random
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -9,6 +10,16 @@ import java.util.regex.Pattern
  */
 class MtgTagLib {
     static namespace = "mtg"
+	
+	def renderRandomCard = { attrs ->
+		Random rand = new Random()
+		def max = Card.count
+		def card = Card.get( rand.nextInt( max ) )
+		while( !card ) {
+			card = Card.get( rand.nextInt( max ) )
+		}
+		out << renderExpansionCardImage( expansionCard: card.expansionCards.first() )
+	}
 
     def renderText = { attrs ->
         String text = attrs.text
