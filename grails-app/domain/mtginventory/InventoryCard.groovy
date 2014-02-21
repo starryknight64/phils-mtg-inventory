@@ -6,7 +6,6 @@ class InventoryCard {
     Integer amount
 
     static constraints = {
-        expansionCard unique: true
     }
 
     String toString() {

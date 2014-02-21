@@ -21,10 +21,13 @@
     <div id="grailsLogo" role="banner">
         <table>
             <tr>
-                <td><a href="${createLink(uri: '/')}"><img height="43px" src="${resource(dir: 'images', file: 'MTGInventory_logo.png')}" alt="MtG Inventory"/></a></td>
+                <td>
+                    <a href="${createLink(uri: '/')}"><img height="43px" src="${resource(dir: 'images', file: 'MTGInventory_logo.png')}" alt="MtG Inventory"/></a>
+                </td>
                 <td>
                     <form action="/MtGInventory/search/index" method="get" id="searchForm" name="searchForm">
                         <input type="text" name="q" value="" size="50" id="q"> <input type="submit" value="Search">
+                        <g:select name="domainClass" from="${["Card","Expansion","Illustrator"]}" value="Card" />
                     </form>
                 </td>
             </tr>

@@ -76,7 +76,7 @@
                                 <li class="fieldcontain">
                                     <span id="expansion-label" class="property-label"><g:message code="expansionCard.expansion.label" default="Expansion" /></span>
 
-                                    <span class="property-value" aria-labelledby="expansion-label"><g:link controller="expansion" action="show" id="${expansionCardInstance?.expansion?.id}"><g:img dir="images/expansions" file="${expansionCardInstance.expansion.name.replace('&','and').replace(':','').replace(' Core Set','').replace('"','')}_${expansionCardInstance.rarity.name.replace("Basic Land","Common").replace("Mythic Rare","Mythic")}.gif" style="max-width: 30px; max-height: 20px;"/></g:link> <g:link controller="expansion" action="show" id="${expansionCardInstance?.expansion?.id}">${expansionCardInstance?.expansion?.encodeAsHTML()}</g:link></span>
+                                    <span class="property-value" aria-labelledby="expansion-label"><mtg:renderExpansion withSymbol="${true}" expansionCard="${expansionCardInstance}" /></span>
 
                                 </li>
                             </g:if>
@@ -121,7 +121,7 @@
                                 <li class="fieldcontain">
                                     <span id="flavorText-label" class="property-label"><g:message code="expansionCard.flavorText.label" default="Flavor Text" /></span>
 
-                                    <span class="property-value" aria-labelledby="flavorText-label"><g:fieldValue bean="${expansionCardInstance}" field="flavorText"/></span>
+                                    <span class="property-value" aria-labelledby="flavorText-label"><i>${expansionCardInstance.flavorText.replace("\n\n","<br>").replace("\n","<br>")}</i></span>
 
                                 </li>
                             </g:if>
@@ -166,7 +166,7 @@
                                 <li class="fieldcontain">
                                     <span id="illustrator-label" class="property-label"><g:message code="expansionCard.illustrator.label" default="Illustrator" /></span>
 
-                                    <span class="property-value" aria-labelledby="illustrator-label"><g:link controller="illustrator" action="show" id="${expansionCardInstance?.illustrator?.id}">${expansionCardInstance?.illustrator?.encodeAsHTML()}</g:link></span>
+                                    <span class="property-value" aria-labelledby="illustrator-label"><mtg:renderIllustrator illustrator="${expansionCardInstance?.illustrator}" /></span>
 
                                 </li>
                             </g:if>

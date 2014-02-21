@@ -19,16 +19,30 @@ class SearchController {
         }
         try {
             params.suggestQuery = true
-            def searchResult = searchableService.search(params.q, params)
+            def searchResult = []
+            if( params.domainClass == "Card" ) {
+                searchResult = Card.search(params.q, params)
+            } else if( params.domainClass == "ExpansionCard" ) {
+                searchResult = ExpansionCard.search(params.q, params)
+            } else if( params.domainClass == "Expansion" ) {
+                searchResult = Expansion.search(params.q, params)
+            } else if( params.domainClass == "Illustrator" ) {
+                searchResult = Illustrator.search(params.q, params)
+            } else {
+                searchResult = searchableService.search(params.q, params)
+            }
             if( !searchResult.results || searchResult.suggestedQuery ) {
-                def suggestedResult = searchableService.search(searchResult.suggestedQuery, params)
+                def suggestedResult = null
+                if( searchResult.suggestedQuery ) {
+                    suggestedResult = searchableService.search(searchResult.suggestedQuery, params)
+                }
                 if( !searchResult.results ) {
                     searchResult = suggestedResult
                 } else {
                     searchResult.results.addAll(suggestedResult.results)
                 }
             }
-            return [searchResult: searchResult]
+            return [searchResult: searchResult, domainClass: params.domainClass]
         } catch (SearchEngineQueryParseException ex) {
             return [parseException: true]
         }

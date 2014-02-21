@@ -27,7 +27,7 @@ class ExpansionCard {
     }
 
     static constraints = {
-        card unique: ['card','expansion','collectorNumber']
+        card unique: ["card","expansion","collectorNumber"]
         text nullable: true
         flavorText nullable: true
         priceLow nullable: true

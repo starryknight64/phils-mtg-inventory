@@ -12,7 +12,24 @@ class ExpansionCardController {
 
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        [expansionCardInstanceList: ExpansionCard.list(params), expansionCardInstanceTotal: ExpansionCard.count()]
+        def list = []
+        def size = 0
+        def listMessage = ""
+        if( params.expansionID ) {
+            def expansion = Expansion.read(params.expansionID)
+            list = ExpansionCard.findAllByExpansion( expansion, params )
+            size = ExpansionCard.countByExpansion( expansion, params )
+            listMessage = " in <b>${expansion.name}</b>"
+        } else if( params.illustratorID ) {
+            def illustrators = Illustrator.getAll(params.illustratorID.split(",").collect{it as int})
+            list = new PageableList( ExpansionCard.findAllByIllustratorInList( illustrators, [sort:"card.name"] )?.unique{a,b->a.card.id <=> b.card.id} ).getNextPage( params )
+            size = list.getTotalCount()
+            listMessage = " illustrated by <b>${illustrators[0].name}</b>"
+        } else {
+            list = ExpansionCard.list(params)
+            size = ExpansionCard.count()
+        }
+        [expansionCardInstanceList: list, expansionCardInstanceTotal: size, listMessage: listMessage, params: params]
     }
 
     def create() {

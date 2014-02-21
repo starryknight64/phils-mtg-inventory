@@ -8,7 +8,7 @@
         <meta name="layout" content="main">
         <title>MtGInventory | Search</title>
     </head>
-    <body onload="focusQueryInput();">
+    <body>
         <div id="header">
             <div style="clear: both; display: none;" class="hint">See <a href="http://lucene.apache.org/java/docs/queryparsersyntax.html">Lucene query syntax</a> for advanced queries</div>
         </div>
@@ -65,11 +65,9 @@
             <g:if test="${haveResults}">
                 <div class="results">
                     <table>
-                        <g:each var="result" in="${searchResult.results}" status="index">
-                            <tr>
-                            <div class="result">
+                        <g:each var="result" in="${searchResult.results}" status="i">
+                            <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
                                 <mtg:renderResult result="${result}" />
-                            </div>
                             </tr>
                         </g:each>
                     </table>
@@ -81,7 +79,7 @@
                             Page:
                             <g:set var="totalPages" value="${Math.ceil(searchResult.total / searchResult.max)}" />
                             <g:if test="${totalPages == 1}"><span class="currentStep">1</span></g:if>
-                            <g:else><g:paginate controller="search" action="index" params="[q: params.q]" total="${searchResult.total}" prev="&lt; previous" next="next &gt;"/></g:else>
+                            <g:else><g:paginate controller="search" action="index" params="[q: params.q, domainClass: params.domainClass]" total="${searchResult.total}" prev="&lt; previous" next="next &gt;"/></g:else>
                         </g:if>
                     </div>
                 </div>
