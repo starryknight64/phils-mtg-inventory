@@ -11,7 +11,7 @@ class ExpansionController {
     }
 
     def list(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
+        params.max = max ?: 1000
         [expansionInstanceList: Expansion.list(params), expansionInstanceTotal: Expansion.count()]
     }
 

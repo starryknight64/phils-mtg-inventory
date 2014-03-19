@@ -45,14 +45,20 @@ class MtgTagLib {
         out << """${g.link( controller:"ExpansionCard", action:"show", id:expansionCard.id, img)}"""
     }
 	
+	def renderExpansionIcon = { attrs ->
+		def expansion = attrs.expansion
+		def expansionName = expansion?.name?.replace('&','and')?.replace(':','')?.replace(' Core Set','')?.replace('"','')
+		def expansionRarity = attrs.expansionCard?.rarity?.name?.replace("Basic Land","Common")?.replace("Mythic Rare","Mythic") ?: "Common"
+		out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}">${g.img( dir:"images/expansions", file:"${expansionName}_${expansionRarity}.gif", style:"max-width: 30px; max-height: 20px;" )}</a>"""
+	}
+	
 	def renderExpansion = { attrs ->
 		def expansionCard = attrs.expansionCard
 		def expansion = expansionCard?.expansion ?: attrs.expansion
 		def withSymbol = attrs.withSymbol
 		if( withSymbol ) {
-			def expansionName = expansion?.name?.replace('&','and')?.replace(':','')?.replace(' Core Set','')?.replace('"','')
-			def expansionRarity = expansionCard?.rarity?.name?.replace("Basic Land","Common")?.replace("Mythic Rare","Mythic")
-			out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}">${g.img( dir:"images/expansions", file:"${expansionName}_${expansionRarity}.gif", style:"max-width: 30px; max-height: 20px;" )}</a> """
+			out << renderExpansionIcon( expansion: expansion )
+			out << " "
 		}
 		out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}">${expansion.name}</a>"""
 	}

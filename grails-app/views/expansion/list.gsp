@@ -28,8 +28,6 @@
 					
 						<g:sortableColumn property="symbol" title="${message(code: 'expansion.symbol.label', default: 'Symbol')}" />
 					
-						<g:sortableColumn property="preReleaseDate" title="${message(code: 'expansion.preReleaseDate.label', default: 'Pre Release Date')}" />
-					
 						<g:sortableColumn property="releaseDate" title="${message(code: 'expansion.releaseDate.label', default: 'Release Date')}" />
 					
 						<g:sortableColumn property="totalCards" title="${message(code: 'expansion.totalCards.label', default: 'Total Cards')}" />
@@ -42,11 +40,9 @@
 					
 						<td><g:link action="show" id="${expansionInstance.id}">${fieldValue(bean: expansionInstance, field: "name")}</g:link></td>
 					
-						<td>${fieldValue(bean: expansionInstance, field: "symbol")}</td>
+						<td><mtg:renderExpansionIcon expansion="${expansionInstance}" /></td>
 					
-						<td><g:formatDate date="${expansionInstance.preReleaseDate}" /></td>
-					
-						<td><g:formatDate date="${expansionInstance.releaseDate}" /></td>
+						<td><g:formatDate date="${expansionInstance.releaseDate}" format="yyyy-MM-dd" /></td>
 					
 						<td>${fieldValue(bean: expansionInstance, field: "totalCards")}</td>
 					
