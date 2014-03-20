@@ -1,5 +1,6 @@
 
 <%@ page import="mtginventory.ExpansionCard" %>
+<%@ page import="mtginventory.PriceSource" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -22,9 +23,21 @@
                 <div class="message" role="status">${flash.message}</div>
             </g:if>
             <table>
-                <tr>
+                <tr class="card">
                     <g:set var="cardInstance" value="${expansionCardInstance?.card}" />
-                    <td style="width: 1px;"><img width="339px" src="http://mtgimage.com/set/${expansionCardInstance.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${cardInstance?.name}.jpg"></td>
+                    <td style="width: 1px;">
+	                    <img width="339px" src="http://mtgimage.com/set/${expansionCardInstance.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${cardInstance?.name}.jpg">
+	                    <div class="card-pricing">
+                            <table>
+                                <thead><tr><th></th><th>Low</th><th>Mid</th><th>High</th></tr></thead>
+                                <tbody>
+                                    <g:each in="${PriceSource.list()}">
+                                        <mtg:renderPrice expansionCard="${expansionCardInstance}" priceSource="${it}" />
+                                    </g:each>
+                                </tbody>
+                            </table>
+	                    </div>
+                    </td>
                     <td>
                         <ol class="property-list expansionCard">
 
@@ -81,11 +94,11 @@
                                 </li>
                             </g:if>
 
-                            <g:if test="${expansionCardInstance?.text}">
+                            <g:if test="${expansionCardInstance?.card?.text}">
                                 <li class="fieldcontain">
                                     <span id="text-label" class="property-label"><g:message code="card.text.label" default="Text" /></span>
 
-                                    <span class="property-value" aria-labelledby="text-label"><mtg:renderText text="${expansionCardInstance.text}" /></span>
+                                    <span class="property-value" aria-labelledby="text-label"><mtg:renderText text="${expansionCardInstance.card.text}" /></span>
 
                                 </li>
                             </g:if>
@@ -122,42 +135,6 @@
                                     <span id="flavorText-label" class="property-label"><g:message code="expansionCard.flavorText.label" default="Flavor Text" /></span>
 
                                     <span class="property-value" aria-labelledby="flavorText-label"><i>${expansionCardInstance.flavorText.replace("\n\n","<br>").replace("\n","<br>")}</i></span>
-
-                                </li>
-                            </g:if>
-
-                            <g:if test="${expansionCardInstance?.priceLow}">
-                                <li class="fieldcontain">
-                                    <span id="priceLow-label" class="property-label"><g:message code="expansionCard.priceLow.label" default="Price Low" /></span>
-
-                                    <span class="property-value" aria-labelledby="priceLow-label"><g:fieldValue bean="${expansionCardInstance}" field="priceLow"/></span>
-
-                                </li>
-                            </g:if>
-
-                            <g:if test="${expansionCardInstance?.priceMid}">
-                                <li class="fieldcontain">
-                                    <span id="priceMid-label" class="property-label"><g:message code="expansionCard.priceMid.label" default="Price Mid" /></span>
-
-                                    <span class="property-value" aria-labelledby="priceMid-label"><g:fieldValue bean="${expansionCardInstance}" field="priceMid"/></span>
-
-                                </li>
-                            </g:if>
-
-                            <g:if test="${expansionCardInstance?.priceHigh}">
-                                <li class="fieldcontain">
-                                    <span id="priceHigh-label" class="property-label"><g:message code="expansionCard.priceHigh.label" default="Price High" /></span>
-
-                                    <span class="property-value" aria-labelledby="priceHigh-label"><g:fieldValue bean="${expansionCardInstance}" field="priceHigh"/></span>
-
-                                </li>
-                            </g:if>
-
-                            <g:if test="${expansionCardInstance?.variation}">
-                                <li class="fieldcontain">
-                                    <span id="variation-label" class="property-label"><g:message code="expansionCard.variation.label" default="Variation" /></span>
-
-                                    <span class="property-value" aria-labelledby="variation-label"><g:fieldValue bean="${expansionCardInstance}" field="variation"/></span>
 
                                 </li>
                             </g:if>

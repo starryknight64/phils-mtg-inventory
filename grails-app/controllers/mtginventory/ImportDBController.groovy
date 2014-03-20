@@ -178,6 +178,7 @@ class ImportDBController {
                 def power = expCard.get( "power" )
                 def toughness = expCard.get( "toughness" )
                 def loyalty = expCard.get( "loyalty" )
+				def imageName = expCard.get( "imageName" )
                 status += out "    $cardName<br>"
 
                 Card card = Card.findByNameAndPowerAndToughnessAndLoyalty( cardName, power, toughness, loyalty )
@@ -186,8 +187,13 @@ class ImportDBController {
                     if( card2 ) {
                         status += out "        Found duplicate card of same name!<br>"
                     }
-                    card = new Card(name:cardName,power:power,toughness:toughness,loyalty:loyalty).save()
+                    card = new Card(name:cardName,text:text,power:power,toughness:toughness,loyalty:loyalty).save()
                 }
+				
+				if( card.text != text ) {
+					card.text = text
+					card.save()
+				}
 
                 if( expansion.expansionCards?.find{ it.card == card && it.collectorNumber == number } == null ) {
                     status += out "        Not found! Adding to DB...<br>"
@@ -195,7 +201,7 @@ class ImportDBController {
                     List<Mana> totalManaCost = getManaCost( manaCost )
                     CardRarity cardRarity = CardRarity.findByName( rarity ) ?: new CardRarity(name: rarity, acronym: "?").save()
                     Set<CardType> cardTypes = getTypes2( superTypes, types, subTypes )
-                    ExpansionCard expansionCard = new ExpansionCard(card: card,expansion: expansion, text:text, flavorText:flavorText,rarity:cardRarity,illustrator:illustrator,collectorNumber: number)
+                    ExpansionCard expansionCard = new ExpansionCard(card: card,expansion: expansion, flavorText:flavorText,rarity:cardRarity,illustrator:illustrator,collectorNumber: number,imageName:imageName)
                     totalManaCost.each {
                         expansionCard.addToManas( it )
                     }
@@ -212,9 +218,9 @@ class ImportDBController {
                     if( !expansionCard ) {
                         status += out "        Couldn't find ExpansionCard for '$card' in '$expansion' with collector number '$number'!<br>"
                     } else {
-                        if( expansionCard.text != text ) {
-                            expansionCard.text = text
-                        }
+						if( expansionCard.imageName != imageName ) {
+							expansionCard.imageName = imageName
+						}
                         Illustrator illustrator = Illustrator.findByName( artist ) ?: new Illustrator(name: artist).save()
                         if( expansionCard.illustrator != illustrator ) {
                             expansionCard.illustrator = illustrator
