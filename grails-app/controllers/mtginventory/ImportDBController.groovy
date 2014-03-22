@@ -130,10 +130,7 @@ class ImportDBController {
         def mtgJSON = new HTTPBuilder("http://mtgjson.com/json/")
         
         status += out "Getting data from mtgjson.com ...<br>"
-        def allSetsJSON = mtgJSON.get( path: "${updateThisExp ?: "AllSets"}-x.json", contentType: ContentType.TEXT )
-                
-        status += out "Converting data to JSON object...<br>"
-        def allSets = new JsonSlurper().parseText(allSetsJSON.str)
+        def allSets = mtgJSON.get( path: "${updateThisExp ?: "AllSets"}-x.json", contentType: ContentType.JSON )
         if( updateThisExp ) {
             allSets = [allSets]
         }

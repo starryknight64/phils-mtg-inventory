@@ -78,14 +78,16 @@ class BootStrap {
             new CardType(name:"Tribal", type: normalType).save()
             new CardType(name:"Vanguard", type: normalType).save()
         }
+		
+		
 
         def mtgJSON = new HTTPBuilder("http://mtgjson.com/json/")
         System.out.println "Checking version of DB from mtgjson.com ..."
-        def mtgJSONVersion = mtgJSON.get( path: "version.json", contentType: ContentType.TEXT )
+        def mtgJSONVersion = mtgJSON.get( path: "version-full.json", contentType: ContentType.JSON )?.version
         def dbVersion = Meta.findByName("version") ?: new Meta(name:"version", value:"").save()
-        if( dbVersion.value != mtgJSONVersion.str ) {
-            System.out.println "Version of DB was $mtgJSONVersion.str, which differs from internal DB of $dbVersion.value!"
-            dbVersion.value = mtgJSONVersion.str
+        if( dbVersion.value != mtgJSONVersion ) {
+            System.out.println "Version of DB was $mtgJSONVersion, which differs from internal DB of $dbVersion.value!"
+            dbVersion.value = mtgJSONVersion
             dbVersion.save()
             Thread.start {
                 new ImportDBController().doImport( null, true )

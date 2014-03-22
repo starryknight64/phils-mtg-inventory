@@ -18,7 +18,6 @@
                 </ul>
             </div>
             <div id="show-expansionCard" class="content scaffold-show" role="main">
-                <h1><g:message code="default.show.label" args="[entityName]" /></h1>
             <g:if test="${flash.message}">
                 <div class="message" role="status">${flash.message}</div>
             </g:if>
@@ -29,7 +28,7 @@
 	                    <img width="339px" src="http://mtgimage.com/set/${expansionCardInstance.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${cardInstance?.name}.jpg">
 	                    <div class="card-pricing">
                             <table>
-                                <thead><tr><th></th><th>Low</th><th>Mid</th><th>High</th></tr></thead>
+                                <thead><tr><th>Seller</th><th>Low</th><th>Mid</th><th>High</th></tr></thead>
                                 <tbody>
                                     <g:each in="${PriceSource.list()}">
                                         <mtg:renderPrice expansionCard="${expansionCardInstance}" priceSource="${it}" />
