@@ -1,3 +1,10 @@
+.card-pricing {
+	margin-top: 10px;
+	border: 1px solid #ccc;
+	padding: 5px 8px;
+	border-radius: 5px;
+}
+
 .card-result {
 	padding: 10px;
 }
@@ -437,7 +444,7 @@ input:invalid:focus,select:invalid:focus,textarea:invalid:focus {
 
 /* TABLES */
 table {
-	border-top: 1px solid #DFDFDF;
+	/*border-top: 1px solid #DFDFDF;*/
 	border-collapse: collapse;
 	width: 100%;
 	margin-bottom: 1em;
@@ -516,7 +523,7 @@ th.desc a {
 	background: #ffffff;
 }
 
-th:hover,tr:hover {
+th:hover, tr:not(.card):hover {
 	background: #E1F2B6;
 }
 
