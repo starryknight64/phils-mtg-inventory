@@ -25,17 +25,15 @@
                 <tr class="card">
                     <g:set var="cardInstance" value="${expansionCardInstance?.card}" />
                     <td style="width: 1px;">
-	                    <img width="339px" src="http://mtgimage.com/set/${expansionCardInstance.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${cardInstance?.name}.jpg">
-	                    <div class="card-pricing">
-                            <table>
-                                <thead><tr><th>Seller</th><th>Low</th><th>Mid</th><th>High</th></tr></thead>
-                                <tbody>
-                                    <g:each in="${PriceSource.list()}">
-                                        <mtg:renderPrice expansionCard="${expansionCardInstance}" priceSource="${it}" />
-                                    </g:each>
-                                </tbody>
-                            </table>
-	                    </div>
+                        <mtg:renderExpansionCardImage expansionCard="${expansionCardInstance}" width="339px" />
+                        <table class="card-pricing">
+                            <thead><tr><th>Seller</th><th>Low</th><th>Mid</th><th>High</th></tr></thead>
+                            <tbody>
+                                <g:each in="${PriceSource.list()}">
+                                    <mtg:renderPrice expansionCard="${expansionCardInstance}" priceSource="${it}" />
+                                </g:each>
+                            </tbody>
+                        </table>
                     </td>
                     <td>
                         <ol class="property-list expansionCard">

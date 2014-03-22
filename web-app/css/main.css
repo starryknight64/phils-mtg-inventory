@@ -5,8 +5,14 @@
 .card-pricing {
 	margin-top: 10px;
 	border: 1px solid #ccc;
-	padding: 5px 8px;
-	border-radius: 5px;
+}
+
+.card-pricing td {
+	white-space: nowrap;
+}
+
+td.price {
+	padding: 1px 6px;
 }
 
 .card-result {
@@ -458,7 +464,7 @@ tr {
 	border: 0;
 }
 
-tr>td:first-child,tr>th:first-child {
+tr>td:first-child, tr>th:first-child {
 	padding-left: 1.25em;
 }
 

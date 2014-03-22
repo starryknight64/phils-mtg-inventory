@@ -23,7 +23,10 @@ class MtgTagLib {
 			if( !price || price?.lastUpdated?.plus(1) < new Date() ) {
 				def pricingREST = new HTTPBuilder( priceSource.rest )
 				def q = [cardname:"${expansionCard.card.name}",setname:"${expansionCard.expansion.name}"]
-				def pricing = pricingREST.get( query: q, contentType: ContentType.JSON )
+				def pricing = []
+				try {
+					pricing = pricingREST.get( query: q, contentType: ContentType.JSON )
+				} catch(Exception ex){}
 				def low = pricing.size() > 2 ? pricing.get(0) : null
 				def median = pricing.size() > 1 ? pricing.get(1) : pricing.size() == 1 ? pricing.get(0) : null 
 				def high = pricing.size() > 2 ? pricing.get(2) : null
@@ -43,9 +46,9 @@ class MtgTagLib {
 			out << """
 				<tr>
 					<td><a href="${priceSource.website}" target="_blank">${priceSource.name}</a></td>
-					<td>${price?.low ?: ""}</td>
-					<td>${price?.median ?: ""}</td>
-					<td>${price?.high ?: ""}</td>
+					<td class="price">${price?.low ?: ""}</td>
+					<td class="price">${price?.median ?: ""}</td>
+					<td class="price">${price?.high ?: ""}</td>
 				</tr>"""
 		}
 	}
@@ -80,7 +83,8 @@ class MtgTagLib {
     
     def renderExpansionCardImage = { attrs ->
         def expansionCard = attrs.expansionCard
-        def img = """<img src="http://mtgimage.com/set/${expansionCard.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${expansionCard.card.name}.jpg" width="200px">"""
+		def width = attrs.width ?: "200px"
+        def img = """<img src="http://mtgimage.com/set/${expansionCard.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${expansionCard.imageName}.jpg" width="${width}">"""
         out << """${g.link( controller:"ExpansionCard", action:"show", id:expansionCard.id, img)}"""
     }
 	
