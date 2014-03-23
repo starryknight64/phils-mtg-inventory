@@ -19,10 +19,27 @@ td.price {
 	padding: 10px;
 }
 
+.expansion-icon img {
+	max-width: 30px;
+	max-height: 18px; 
+}
+
 .card-text {
 	border: 1px solid #ccc;
 	border-radius: 5px;
 	padding: 5px 10px;
+}
+
+.card-text .expansion {
+	display: inline;
+	float: right;
+	position: relative;
+	bottom: 2px;
+}
+
+.card-text .expansion-icon {
+	position: relative;
+	left: 3px;
 }
 
 .card-text hr {
@@ -111,7 +128,7 @@ body {
 	box-shadow: 0 0 0.3em #255b17;
 }
 
-#grailsLogo {
+#logo {
 	background-color: #abbf78;
 }
 
@@ -151,7 +168,7 @@ img {
 }
 
 /* GENERAL */
-#grailsLogo a {
+#logo a {
 	display: inline-block;
 	margin: 1em;
 }
@@ -533,7 +550,7 @@ th.desc a {
 	background: #ffffff;
 }
 
-th:hover, tr:not(.card):hover {
+th:hover, tr:not(.card):not(.banner):hover {
 	background: #E1F2B6;
 }
 

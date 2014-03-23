@@ -56,6 +56,9 @@ class MtgTagLib {
 	def renderRandomCard = { attrs ->
 		Random rand = new Random()
 		def max = Card.count
+		if( max <= 0 ) {
+			return
+		}
 		def card = Card.get( rand.nextInt( max ) )
 		while( !card ) {
 			card = Card.get( rand.nextInt( max ) )
@@ -92,18 +95,19 @@ class MtgTagLib {
 		def expansion = attrs.expansion
 		def expansionName = expansion?.name?.replace('&','and')?.replace(':','')?.replace(' Core Set','')?.replace('"','')
 		def expansionRarity = attrs.expansionCard?.rarity?.name?.replace("Basic Land","Common")?.replace("Mythic Rare","Mythic") ?: "Common"
-		out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}">${g.img( dir:"images/expansions", file:"${expansionName}_${expansionRarity}.gif", style:"max-width: 30px; max-height: 20px;" )}</a>"""
+		out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}" class="expansion-icon">${g.img( dir:"images/expansions", file:"${expansionName}_${expansionRarity}.gif")}</a>"""
 	}
 	
 	def renderExpansion = { attrs ->
 		def expansionCard = attrs.expansionCard
 		def expansion = expansionCard?.expansion ?: attrs.expansion
+		def expStyle = attrs.expStyle
 		def withSymbol = attrs.withSymbol
 		if( withSymbol ) {
 			out << renderExpansionIcon( expansion: expansion )
 			out << " "
 		}
-		out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}">${expansion.name}</a>"""
+		out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}" class="expansion-name">${expansion.name}</a>"""
 	}
 	
 	def renderIllustrator = { attrs ->
@@ -132,10 +136,13 @@ class MtgTagLib {
                 <td class='card-result'><div class='card-text'>
 					<b>${g.link( controller:"ExpansionCard", action:"show", id:"${expansionCard.id}", card.name )}</b><br>
                 <i>"""
-            expansionCard.types.sort{ a,b -> a.id <=> b.id }.each {
+            card.types.sort{ a,b -> a.id <=> b.id }.each {
                 out << "${it.name} "
             }
             out << "</i>"
+			out << "<i class='expansion'>"
+			out << renderExpansion( expansion: expansionCard.expansion, withSymbol: true )
+			out << "</i>"
             if( card.text ) {
                 out << "<hr><b>"
                 out << mtg.renderText( text:card.text )

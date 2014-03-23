@@ -18,9 +18,9 @@
     <r:layoutResources />
 </head>
 <body>
-    <div id="grailsLogo" role="banner">
+    <div id="logo" role="banner">
         <table>
-            <tr>
+            <tr class="banner">
                 <td>
                     <a href="${createLink(uri: '/')}"><img height="43px" src="${resource(dir: 'images', file: 'MTGInventory_logo.png')}" alt="MtG Inventory"/></a>
                 </td>
@@ -33,7 +33,14 @@
             </tr>
         </table>
     </div>
-    <g:layoutBody/>
+	<div class="nav" role="navigation">
+		<ul>
+            <li><g:link controller="Expansion" class="list" action="list">Expansions</g:link></li>
+            <li><g:link controller="Deck" class="list" action="list">Decks</g:link></li>
+            <li><g:link controller="Inventory" class="list" action="list">Inventories</g:link></li>
+		</ul>
+	</div>
+	<g:layoutBody/>
     <div class="footer" role="contentinfo"></div>
     <div id="spinner" class="spinner" style="display:none;"><g:message code="spinner.alt" default="Loading&hellip;"/></div>
     <g:javascript library="application"/>

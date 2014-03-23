@@ -12,13 +12,10 @@ class ExpansionCard {
 
     static belongsTo = Expansion
 
-    static hasMany = [manas: Mana,
-        types: CardType, prices: ExpansionCardPrice]
+    static hasMany = [prices: ExpansionCardPrice]
 
     static mapping = {
         flavorText sqlType: "text"
-        manas cascade: "all-delete-orphan"
-        types cascade: "all-delete-orphan"
     }
 
     static constraints = {

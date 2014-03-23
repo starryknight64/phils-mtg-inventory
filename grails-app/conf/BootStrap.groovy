@@ -47,12 +47,16 @@ class BootStrap {
             new Mana(name:"Snow Mana",symbol:"{S}",cmc:"1").addToColors(colorless).save()
             new Mana(name:"1000000",symbol:"{1000000}",cmc:"1000000").addToColors(colorless).save()
             new Mana(name:"Half White",symbol:"{HW}",cmc:"0.5").addToColors(white).save()
-
+        }
+		
+		if( !CardRarity.count() ) {
             new CardRarity(name: "Common", acronym: "C").save()
             new CardRarity(name: "Uncommon", acronym: "U").save()
             new CardRarity(name: "Rare", acronym: "R").save()
             new CardRarity(name: "Mythic Rare", acronym: "M").save()
-
+		}
+		
+		if( !CardTypeType.count() ) {
             CardTypeType superType = new CardTypeType(name:"Supertype").save()
             CardTypeType normalType = new CardTypeType(name:"Type").save()
             CardTypeType subType = new CardTypeType(name:"Subtype").save()
@@ -77,10 +81,14 @@ class BootStrap {
             new CardType(name:"Sorcery", type: normalType).save()
             new CardType(name:"Tribal", type: normalType).save()
             new CardType(name:"Vanguard", type: normalType).save()
+		}
+		
+		if( !PriceSource.count() ) {
+			new PriceSource(name:"TCGPlayer",website:"http://www.tcgplayer.com",rest:"http://magictcgprices.appspot.com/api/tcgplayer/price.json").save()
+			new PriceSource(name:"eBay",website:"http://www.ebay.com",rest:"http://magictcgprices.appspot.com/api/ebay/price.json").save()
+			new PriceSource(name:"Channel Fireball",website:"http://www.channelfireball.com",rest:"http://magictcgprices.appspot.com/api/cfb/price.json").save()
         }
 		
-		
-
         def mtgJSON = new HTTPBuilder("http://mtgjson.com/json/")
         System.out.println "Checking version of DB from mtgjson.com ..."
         def mtgJSONVersion = mtgJSON.get( path: "version-full.json", contentType: ContentType.JSON )?.version

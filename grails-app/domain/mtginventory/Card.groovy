@@ -11,10 +11,12 @@ class Card {
     String toughness
     String loyalty
 
-    static hasMany = [expansionCards: ExpansionCard]
+    static hasMany = [expansionCards: ExpansionCard, manas: Mana, types: CardType]
 
     static mapping = {
         text sqlType: "text"
+        manas cascade: "all-delete-orphan"
+        types cascade: "all-delete-orphan"
     }
 
     static constraints = {

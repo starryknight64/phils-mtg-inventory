@@ -9,14 +9,6 @@
         <title><g:message code="default.show.label" args="[entityName]" /></title>
     </head>
     <body>
-        <a href="#show-expansionCard" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-        <div class="nav" role="navigation">
-            <ul>
-                <li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-                <li><g:link class="list" action="list"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
-                <li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
-                </ul>
-            </div>
             <div id="show-expansionCard" class="content scaffold-show" role="main">
             <g:if test="${flash.message}">
                 <div class="message" role="status">${flash.message}</div>
@@ -47,12 +39,12 @@
                                 </li>
                             </g:if>
 
-                            <g:if test="${expansionCardInstance?.manas}">
+                            <g:if test="${cardInstance?.manas}">
                                 <li class="fieldcontain">
                                     <span id="manas-label" class="property-label"><g:message code="expansionCard.manas.label" default="Manas" /></span>
 
                                     <span class="property-value" aria-labelledby="manas-label">
-                                        <g:each in="${expansionCardInstance.manas.sort{ a,b -> b.id <=> a.id }}" var="m">
+                                        <g:each in="${cardInstance.manas.sort{ a,b -> b.id <=> a.id }}" var="m">
                                             <g:link controller="mana" action="show" id="${m.id}"><g:img dir="images/mana" file="${m.symbol.replace('{','').replace('}','')}.gif" style="max-height: 20px; max-width: 20px"/></g:link>
                                         </g:each>
                                     </span>
@@ -60,12 +52,12 @@
                                 </li>
                             </g:if>
 
-                            <g:if test="${expansionCardInstance?.types}">
+                            <g:if test="${cardInstance?.types}">
                                 <li class="fieldcontain">
                                     <span id="types-label" class="property-label"><g:message code="expansionCard.types.label" default="Types" /></span>
 
                                     <span class="property-value" aria-labelledby="types-label">
-                                        <g:each in="${expansionCardInstance.types.sort{ a,b -> a.id <=> b.id }}" var="t">
+                                        <g:each in="${cardInstance.types.sort{ a,b -> a.id <=> b.id }}" var="t">
                                         <g:link controller="cardType" action="show" id="${t.id}">${t?.name?.encodeAsHTML()}</g:link>&nbsp;
                                         </g:each>
                                     </span>

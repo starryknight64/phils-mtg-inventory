@@ -12,17 +12,26 @@ class ImportDBController {
         Set allTypes = []
         CardTypeType typeType = CardTypeType.findByName("Supertype")
         superTypes?.each {
-            CardType type = CardType.findByName( it ) ?: new CardType(name: it, type: typeType).save(flush:true)
-            allTypes.add(type)
+            CardType type = CardType.findByName( it )
+			if( !type ) {
+				type = new CardType(name: it, type: typeType).save(flush:true)
+			}
+			allTypes.add(type)
         }
         typeType = CardTypeType.findByName("Type")
         types?.each {
-            CardType type = CardType.findByName( it ) ?: new CardType(name: it, type: typeType).save(flush:true)
-            allTypes.add(type)
+            CardType type = CardType.findByName( it )
+			if( !type ) {
+				type = new CardType(name: it, type: typeType).save(flush:true)
+			}
+			allTypes.add(type)
         }
         typeType = CardTypeType.findByName("Subtype")
         subTypes?.each {
-            CardType type = CardType.findByName( it ) ?: new CardType(name: it, type: typeType).save(flush:true)
+            CardType type = CardType.findByName( it )
+			if( !type ) {
+				type = new CardType(name: it, type: typeType).save(flush:true)
+			}
             allTypes.add(type)
         }
         return allTypes
@@ -184,27 +193,72 @@ class ImportDBController {
                     if( card2 ) {
                         status += out "        Found duplicate card of same name!<br>"
                     }
-                    card = new Card(name:cardName,text:text,power:power,toughness:toughness,loyalty:loyalty).save()
-                }
-				
-				if( card.text != text ) {
-					card.text = text
+                    card = new Card(name:cardName,text:text,power:power,toughness:toughness,loyalty:loyalty)
+					 
+					getManaCost( manaCost )?.each {
+						card.addToManas( it )
+					}
+					
+					getTypes2( superTypes, types, subTypes )?.each {
+						card.addToTypes( it )
+					}
 					card.save()
-				}
+                } else {
+					if( card.text != text ) {
+						card.text = text
+					}
+					
+                    List<Mana> totalManaCost = getManaCost( manaCost )
+                    def updateManaCost = false
+                    for( Mana mana : totalManaCost ) {
+                        if( !card.manas?.contains( mana ) ) {
+                            updateManaCost = true
+                            break
+                        }
+                    }
+                    if( updateManaCost ) {
+                        card.manas?.clear()
+                        totalManaCost.each {
+                            card.addToManas( it )
+                        }
+                    }
+					
+					def updateCardTypes = false
+					Set<CardType> cardTypes = getTypes2( superTypes, types, subTypes )
+					for( CardType type : cardTypes ) {
+						if( !card.types?.contains( type ) ) {
+							updateCardTypes = true
+							break
+						}
+					}
+					if( updateCardTypes ) {
+						card.types?.clear()
+						cardTypes.each {
+							card.addToTypes( it )
+						}
+					}
+					
+					if( card.isDirty() ) {
+						card.save()
+					}
+                }
 
                 if( expansion.expansionCards?.find{ it.card == card && it.collectorNumber == number } == null ) {
                     status += out "        Not found! Adding to DB...<br>"
                     Illustrator illustrator = Illustrator.findByName( artist ) ?: new Illustrator(name: artist).save()
-                    List<Mana> totalManaCost = getManaCost( manaCost )
+					if( !illustrator ) {
+						status += out "        Illustrator '$artist' not found! Stopping...<br>"
+						return
+					}
+                    
                     CardRarity cardRarity = CardRarity.findByName( rarity ) ?: new CardRarity(name: rarity, acronym: "?").save()
-                    Set<CardType> cardTypes = getTypes2( superTypes, types, subTypes )
+					if( !cardRarity ) {
+						status += out "        Card Rarity '$rarity' not found! Stopping...<br>"
+						return
+					}
+					
                     ExpansionCard expansionCard = new ExpansionCard(card: card,expansion: expansion, flavorText:flavorText,rarity:cardRarity,illustrator:illustrator,collectorNumber: number,imageName:imageName)
-                    totalManaCost.each {
-                        expansionCard.addToManas( it )
-                    }
-                    cardTypes.each {
-                        expansionCard.addToTypes( it )
-                    }
+
                     if (!expansionCard.save()) {
                         expansionCard.errors.each {
                             println it
@@ -222,39 +276,10 @@ class ImportDBController {
                         if( expansionCard.illustrator != illustrator ) {
                             expansionCard.illustrator = illustrator
                         }
-                        List<Mana> totalManaCost = getManaCost( manaCost )
-                        def updateManaCost = false
-                        for( Mana mana : totalManaCost ) {
-                            if( !expansionCard.manas?.contains( mana ) ) {
-                                updateManaCost = true
-                                break
-                            }
-                        }
-                        if( updateManaCost ) {
-                            expansionCard.manas?.clear()
-                            totalManaCost.each {
-                                expansionCard.addToManas( it )
-                            }
-                        }
                         CardRarity cardRarity = CardRarity.findByName( rarity ) ?: new CardRarity(name: rarity, acronym: "?").save()
                         if( expansionCard.rarity != cardRarity ) {
                             expansionCard.rarity = cardRarity
                         }
-                        def updateCardTypes = false
-                        Set<CardType> cardTypes = getTypes2( superTypes, types, subTypes )
-                        for( CardType type : cardTypes ) {
-                            if( !expansionCard.types?.contains( type ) ) {
-                                updateCardTypes = true
-                                break
-                            }
-                        }
-                        if( updateCardTypes ) {
-                            expansionCard.types?.clear()
-                            cardTypes.each {
-                                expansionCard.addToTypes( it )
-                            }
-                        }
-                    
                         if( expansionCard.isDirty() ) {
                             status += out "        updated!"
                             expansionCard.save()
