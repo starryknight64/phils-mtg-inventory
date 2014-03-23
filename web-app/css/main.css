@@ -15,8 +15,23 @@ td.price {
 	padding: 1px 6px;
 }
 
+.fieldcontain br, .card-text br {
+	line-height: 150%;
+}
+
 .card-result {
 	padding: 10px;
+}
+
+img.card-image {
+	border-radius: 5px;
+	border: 1px solid #ccc;
+}
+
+.card-symbol {
+	max-height: 20px;
+	max-width: 20px;
+	vertical-align: middle;
 }
 
 .expansion-icon img {
@@ -75,6 +90,10 @@ td.price {
 
 table #searchForm {
 	padding-top: 25px;
+}
+
+.search-results {
+    padding: 10px;
 }
 
 /* FONT STACK */

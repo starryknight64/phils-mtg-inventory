@@ -77,7 +77,7 @@ class MtgTagLib {
             def symbolImageFile = grailsApplication.parentContext.getResource("images/mana/${symbolImage}")
             
             if( mana || symbolImageFile?.exists() ) {
-                String manaImage = g.img( dir:"images/mana", file:"${symbolImage}", style:"max-height: 20px; max-width: 20px")
+                String manaImage = g.img( dir:"images/mana", file:"${symbolImage}", class:"card-symbol")
                 text = text.replace( symbol, manaImage )
             }
         }
@@ -87,7 +87,7 @@ class MtgTagLib {
     def renderExpansionCardImage = { attrs ->
         def expansionCard = attrs.expansionCard
 		def width = attrs.width ?: "200px"
-        def img = """<img src="http://mtgimage.com/set/${expansionCard.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${expansionCard.imageName}.jpg" width="${width}">"""
+        def img = """<img src="http://mtgimage.com/set/${expansionCard.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${expansionCard.imageName}.jpg" class="card-image" width="${width}">"""
         out << """${g.link( controller:"ExpansionCard", action:"show", id:expansionCard.id, img)}"""
     }
 	

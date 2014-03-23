@@ -15,7 +15,7 @@
         <div id="main">
             <g:set var="haveQuery" value="${params.q?.trim()}" />
             <g:set var="haveResults" value="${searchResult?.results}" />
-            <div class="title" style="padding-left: 10px; padding-bottom: 10px;">
+            <div class="search-results">
                 <span>
                     <g:if test="${haveQuery && haveResults}">
                         Showing <strong>${searchResult.offset + 1}</strong> - <strong>${searchResult.results.size() + searchResult.offset}</strong> of <strong>${searchResult.total}</strong>
