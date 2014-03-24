@@ -8,30 +8,12 @@
 		<title><g:message code="default.show.label" args="[entityName]" /></title>
 	</head>
 	<body>
-		<a href="#show-deck" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-		<div class="nav" role="navigation">
-			<ul>
-				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-				<li><g:link class="list" action="list"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
-				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
-			</ul>
-		</div>
 		<div id="show-deck" class="content scaffold-show" role="main">
-			<h1><g:message code="default.show.label" args="[entityName]" /></h1>
+			<h1>${deckInstance.name} (${deckInstance.cards?.size()})</h1>
 			<g:if test="${flash.message}">
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>
 			<ol class="property-list deck">
-			
-				<g:if test="${deckInstance?.name}">
-				<li class="fieldcontain">
-					<span id="name-label" class="property-label"><g:message code="deck.name.label" default="Name" /></span>
-					
-						<span class="property-value" aria-labelledby="name-label"><g:fieldValue bean="${deckInstance}" field="name"/></span>
-					
-				</li>
-				</g:if>
-			
 				<g:if test="${deckInstance?.description}">
 				<li class="fieldcontain">
 					<span id="description-label" class="property-label"><g:message code="deck.description.label" default="Description" /></span>
@@ -54,10 +36,12 @@
 				<li class="fieldcontain">
 					<span id="cards-label" class="property-label"><g:message code="deck.cards.label" default="Cards" /></span>
 					
+					<table>
+					<tr><th>Amt</th><th>Card Name</th></tr>
 						<g:each in="${deckInstance.cards}" var="c">
-						<span class="property-value" aria-labelledby="cards-label"><g:link controller="inventoryCard" action="show" id="${c.id}">${c?.encodeAsHTML()}</g:link></span>
+						<tr><td>${c.amount}</td><td><g:link controller="ExpansionCard" action="show" id="${c.expansionCard.id}">${c?.expansionCard?.card?.name?.encodeAsHTML()}</g:link></td></tr>
 						</g:each>
-					
+					</table>
 				</li>
 				</g:if>
 			

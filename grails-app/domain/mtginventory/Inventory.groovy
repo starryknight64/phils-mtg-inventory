@@ -4,7 +4,7 @@ class Inventory {
 
     String name
 
-    static hasMany = [inventoryCards: InventoryCard]
+    static hasMany = [cards: InventoryCard]
 
     static constraints = {
         name unique: true

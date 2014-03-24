@@ -9,6 +9,47 @@ class DeckController {
     def index() {
         redirect(action: "list", params: params)
     }
+	
+	def addCard() {
+		render params
+		Deck deck = Deck.get( params.to )
+		ExpansionCard expansionCard = ExpansionCard.get( params.expansionCardID )
+		Integer add = params.add?.toInteger()
+		
+		def inventoryCards = []
+		def addCardAs = params["as"]
+		if( addCardAs == "Main Deck" ) {
+			inventoryCards = deck.cards
+		} else if( addCardAs == "Sideboard" ) {
+			inventoryCards = deck.sideboardCards
+		} else if( addCardAs == "Commander" ) {
+			inventoryCards = [deck.commander]
+		}
+		
+		if( inventoryCards?.expansionCard?.contains( expansionCard ) ) {
+			InventoryCard inventoryCard = inventoryCards.find{ it.expansionCard == expansionCard }
+			inventoryCard.amount += add
+			inventoryCard.save()
+			redirect( action:"show", id:deck.id )
+		} else {
+			if( addCardAs == "Main Deck" || addCardAs == "Sideboard" ) {
+				InventoryCard inventoryCard = new InventoryCard( expansionCard: expansionCard, amount: add ).save()
+				if( addCardAs == "Main Deck" ) {
+					deck.addToCards( inventoryCard ).save()
+				} else {
+					deck.addToSideboardCards( inventoryCard ).save()
+				}
+				redirect( action:"show", id:deck.id )
+				return
+			} else if( addCardAs == "Commander" ) {
+				deck.commander = expansionCard
+				deck.save()
+				redirect( action:"show", id:deck.id )
+				return
+			}
+		}
+		redirect(uri: request.getHeader('referer') )
+	}
 
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)

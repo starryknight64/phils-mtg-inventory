@@ -15,6 +15,6 @@
 		<g:message code="inventory.inventoryCards.label" default="Inventory Cards" />
 		
 	</label>
-	<g:select name="inventoryCards" from="${mtginventory.InventoryCard.list()}" multiple="multiple" optionKey="id" size="5" value="${inventoryInstance?.inventoryCards*.id}" class="many-to-many"/>
+	<g:select name="cards" from="${mtginventory.InventoryCard.list()}" multiple="multiple" optionKey="id" size="5" value="${inventoryInstance?.cards*.id}" class="many-to-many"/>
 </div>
 

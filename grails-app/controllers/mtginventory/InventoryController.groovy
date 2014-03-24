@@ -9,6 +9,27 @@ class InventoryController {
     def index() {
         redirect(action: "list", params: params)
     }
+	
+	def addCard() {
+		render params
+		Inventory inventory = Inventory.get( params.to )
+		ExpansionCard expansionCard = ExpansionCard.get( params.expansionCardID )
+		Integer add = params.add?.toInteger()
+		
+		if( inventory?.cards?.expansionCard?.contains( expansionCard ) ) {
+			InventoryCard inventoryCard = inventory.cards.find{ it.expansionCard == expansionCard }
+			inventoryCard.amount += add
+			inventoryCard.save()
+			redirect( action:"show", id:inventory.id )
+			return
+		} else if( expansionCard && add > 0 ) {
+			InventoryCard inventoryCard = new InventoryCard( expansionCard: expansionCard, amount: add ).save()
+			inventory.addToCards( inventoryCard ).save()
+			redirect( action:"show", id:inventory.id )
+			return
+		}
+		redirect(uri: request.getHeader('referer') )
+	}
 
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)

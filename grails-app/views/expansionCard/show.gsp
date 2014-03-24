@@ -1,5 +1,7 @@
 
 <%@ page import="mtginventory.ExpansionCard" %>
+<%@ page import="mtginventory.Deck" %>
+<%@ page import="mtginventory.Inventory" %>
 <%@ page import="mtginventory.PriceSource" %>
 <!DOCTYPE html>
 <html>
@@ -16,7 +18,59 @@
             <table>
                 <tr class="card">
                     <g:set var="cardInstance" value="${expansionCardInstance?.card}" />
-                    <td style="width: 1px;">
+                    <td style="width: 330px;">
+                    <div class="add-card-form">
+                        <form action="${createLink(uri: "/")}">
+                            <g:hiddenField name="expansionCardID" value="${expansionCardInstance?.id}" />
+                            <table class="add-card-table">
+	                            <tr>
+	                                <td><label for="add">Add</label></td>
+	                                <td>
+	                                   <select name="add">
+	                                       <g:each in="${[1,2,3,4]}">
+                                                <option id="add-${it}">${it}</option>
+	                                       </g:each>
+                                           <option id="add-other">...</option>
+                                       </select>
+                                    </td>
+	                            </tr>
+	                            <tr>
+	                                <td><label for="to">to</label></td>
+	                                <td>
+	                                   <select name="to">
+                                           <optgroup label="Deck">
+                                               <g:each in="${Deck.list()}">
+                                                   <option class="to-deck" value="${it.id}">${it.name}</option>
+                                               </g:each>
+                                           </optgroup>
+                                           <optgroup label="Inventory">
+                                               <g:each in="${Inventory.list()}">
+                                                   <option class="to-inventory" value="${it.id}">${it.name}</option>
+                                               </g:each>
+                                           </optgroup>
+                                       </select>
+                                    </td>
+	                            </tr>
+	                            <tr>
+	                                <td><label for="as">as</label></td>
+	                                <td>
+	                                   <select name="as">
+	                                       <option id="as-main-deck">Main Deck</option>
+	                                       <option id="as-sideboard">Sideboard</option>
+	                                       <g:set var="typeNames" value="${expansionCardInstance?.card?.types?.name}" />
+	                                       <g:if test="${typeNames?.contains( "Legendary" ) && typeNames?.contains( "Creature" )}">
+	                                           <option id="as-commander">Commander</option>
+	                                       </g:if>
+                                       </select>
+                                    </td>
+	                            </tr>
+	                            <tr>
+	                                <td></td>
+	                                <td><input type="button" class="add-card-button" value="Add"></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
                         <mtg:renderExpansionCardImage expansionCard="${expansionCardInstance}" width="339px" />
                         <table class="card-pricing">
                             <thead><tr><th>Seller</th><th>Low</th><th>Mid</th><th>High</th></tr></thead>

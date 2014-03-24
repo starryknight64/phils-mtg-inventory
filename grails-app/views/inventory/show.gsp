@@ -32,12 +32,12 @@
 				</li>
 				</g:if>
 			
-				<g:if test="${inventoryInstance?.inventoryCards}">
+				<g:if test="${inventoryInstance?.cards}">
 				<li class="fieldcontain">
-					<span id="inventoryCards-label" class="property-label"><g:message code="inventory.inventoryCards.label" default="Inventory Cards" /></span>
+					<span id="inventoryCards-label" class="property-label"><g:message code="inventory.cards.label" default="Inventory Cards" /></span>
 					
-						<g:each in="${inventoryInstance.inventoryCards}" var="i">
-						<span class="property-value" aria-labelledby="inventoryCards-label"><g:link controller="inventoryCard" action="show" id="${i.id}">${i?.encodeAsHTML()}</g:link></span>
+						<g:each in="${inventoryInstance.cards}" var="i">
+						<span class="property-value" aria-labelledby="cards-label"><g:link controller="inventoryCard" action="show" id="${i.id}">${i?.encodeAsHTML()}</g:link></span>
 						</g:each>
 					
 				</li>
