@@ -111,6 +111,7 @@ class InventoryController {
         }
 
         try {
+			inventoryInstance.cards*.delete()
             inventoryInstance.delete(flush: true)
             flash.message = message(code: 'default.deleted.message', args: [message(code: 'inventory.label', default: 'Inventory'), id])
             redirect(action: "list")

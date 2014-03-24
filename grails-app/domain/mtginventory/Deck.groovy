@@ -14,8 +14,6 @@ class Deck {
 
 	static mapping = {
 		description sqlType: "text"
-        cards cascade: "all-delete-orphan"
-        sideboardCards cascade: "all-delete-orphan"
 	}
 	
 	static constraints = {

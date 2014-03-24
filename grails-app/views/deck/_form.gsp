@@ -23,7 +23,7 @@
 		<g:message code="deck.commander.label" default="Commander" />
 		
 	</label>
-	<g:select id="commander" name="commander.id" from="${mtginventory.ExpansionCard.list()}" optionKey="id" value="${deckInstance?.commander?.id}" class="many-to-one" noSelection="['null': '']"/>
+	<g:select id="commander" name="commander.id" from="${deckInstance?.commander ? [deckInstance?.commander] : []}" optionKey="id" value="${deckInstance?.commander?.id}" class="many-to-one" noSelection="['null': '']"/>
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: deckInstance, field: 'cards', 'error')} ">
@@ -31,7 +31,7 @@
 		<g:message code="deck.cards.label" default="Cards" />
 		
 	</label>
-	<g:select name="cards" from="${mtginventory.InventoryCard.list()}" multiple="multiple" optionKey="id" size="5" value="${deckInstance?.cards*.id}" class="many-to-many"/>
+	<g:select name="cards" from="${deckInstance?.cards ?: []}" multiple="multiple" optionKey="id" size="5" value="${deckInstance?.cards?.id}" class="many-to-many"/>
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: deckInstance, field: 'createdBy', 'error')} ">
@@ -47,7 +47,7 @@
 		<g:message code="deck.sideboardCards.label" default="Sideboard Cards" />
 		
 	</label>
-	<g:select name="sideboardCards" from="${mtginventory.InventoryCard.list()}" multiple="multiple" optionKey="id" size="5" value="${deckInstance?.sideboardCards*.id}" class="many-to-many"/>
+	<g:select name="sideboardCards" from="${deckInstance?.sideboardCards ?: []}" multiple="multiple" optionKey="id" size="5" value="${deckInstance?.sideboardCards?.id}" class="many-to-many"/>
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: deckInstance, field: 'type', 'error')} required">

@@ -131,7 +131,10 @@ class DeckController {
         }
 
         try {
+			deckInstance.cards*.delete()
+			deckInstance.sideboardCards*.delete()
             deckInstance.delete(flush: true)
+			
             flash.message = message(code: 'default.deleted.message', args: [message(code: 'deck.label', default: 'Deck'), id])
             redirect(action: "list")
         }
