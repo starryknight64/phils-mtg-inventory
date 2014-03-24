@@ -1,3 +1,22 @@
+.add-card-form {
+	width: inherit;
+    position: absolute;
+    top: 185px;
+    background: rgba(255,255,255,.8);
+    padding: 5px;
+    border-radius: 5px;
+    display: none;
+}
+
+.add-card-form label {
+	float: right;
+	padding-top: 5px;
+}
+
+.add-card-form .to {
+	max-width: 260px;
+}
+
 #show-expansionCard {
 	padding-top: 10px;
 }
@@ -493,7 +512,7 @@ table {
 	/*border-top: 1px solid #DFDFDF;*/
 	border-collapse: collapse;
 	width: 100%;
-	margin-bottom: 1em;
+/* 	margin-bottom: 1em; */
 }
 
 tr {
@@ -569,7 +588,7 @@ th.desc a {
 	background: #ffffff;
 }
 
-th:hover, tr:not(.card):not(.banner):hover {
+th:hover, tr:not(.card):not(.banner):not(.add-card-table):hover {
 	background: #E1F2B6;
 }
 
