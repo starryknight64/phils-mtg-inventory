@@ -87,7 +87,7 @@ class MtgTagLib {
     def renderExpansionCardImage = { attrs ->
         def expansionCard = attrs.expansionCard
 		def width = attrs.width ?: "200px"
-        def img = """<img src="http://mtgimage.com/set/${expansionCard.expansion.expansionCodes.find{ it.author == "mtgsalvation" }?.code}/${expansionCard.imageName}.jpg" class="card-image" width="${width}">"""
+        def img = """<img src="http://mtgimage.com/set/${expansionCard.expansion.code}/${expansionCard.imageName}.jpg" class="card-image" width="${width}">"""
         out << """${g.link( controller:"ExpansionCard", action:"show", id:expansionCard.id, img)}"""
     }
 	

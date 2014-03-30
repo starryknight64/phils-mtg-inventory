@@ -32,24 +32,6 @@
 				</li>
 				</g:if>
 			
-				<g:if test="${expansionInstance?.symbol}">
-				<li class="fieldcontain">
-					<span id="symbol-label" class="property-label"><g:message code="expansion.symbol.label" default="Symbol" /></span>
-					
-						<span class="property-value" aria-labelledby="symbol-label"><g:fieldValue bean="${expansionInstance}" field="symbol"/></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${expansionInstance?.preReleaseDate}">
-				<li class="fieldcontain">
-					<span id="preReleaseDate-label" class="property-label"><g:message code="expansion.preReleaseDate.label" default="Pre Release Date" /></span>
-					
-						<span class="property-value" aria-labelledby="preReleaseDate-label"><g:formatDate date="${expansionInstance?.preReleaseDate}" /></span>
-					
-				</li>
-				</g:if>
-			
 				<g:if test="${expansionInstance?.releaseDate}">
 				<li class="fieldcontain">
 					<span id="releaseDate-label" class="property-label"><g:message code="expansion.releaseDate.label" default="Release Date" /></span>
@@ -78,18 +60,6 @@
 					
 				</li>
 				</g:if>
-			
-				<g:if test="${expansionInstance?.expansionCodes}">
-				<li class="fieldcontain">
-					<span id="expansionCodes-label" class="property-label"><g:message code="expansion.expansionCodes.label" default="Expansion Codes" /></span>
-					
-						<g:each in="${expansionInstance.expansionCodes}" var="e">
-						<span class="property-value" aria-labelledby="expansionCodes-label"><g:link controller="expansionCode" action="show" id="${e.id}">${e?.encodeAsHTML()}</g:link></span>
-						</g:each>
-					
-				</li>
-				</g:if>
-			
 			</ol>
 			<g:form>
 				<fieldset class="buttons">

@@ -10,22 +10,6 @@
 	<g:textField name="name" value="${expansionInstance?.name}"/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: expansionInstance, field: 'symbol', 'error')} ">
-	<label for="symbol">
-		<g:message code="expansion.symbol.label" default="Symbol" />
-		
-	</label>
-	<g:textField name="symbol" value="${expansionInstance?.symbol}"/>
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: expansionInstance, field: 'preReleaseDate', 'error')} ">
-	<label for="preReleaseDate">
-		<g:message code="expansion.preReleaseDate.label" default="Pre Release Date" />
-		
-	</label>
-	<g:datePicker name="preReleaseDate" precision="day"  value="${expansionInstance?.preReleaseDate}" default="none" noSelection="['': '']" />
-</div>
-
 <div class="fieldcontain ${hasErrors(bean: expansionInstance, field: 'releaseDate', 'error')} ">
 	<label for="releaseDate">
 		<g:message code="expansion.releaseDate.label" default="Release Date" />
@@ -58,21 +42,3 @@
 </ul>
 
 </div>
-
-<div class="fieldcontain ${hasErrors(bean: expansionInstance, field: 'expansionCodes', 'error')} ">
-	<label for="expansionCodes">
-		<g:message code="expansion.expansionCodes.label" default="Expansion Codes" />
-		
-	</label>
-	
-<ul class="one-to-many">
-<g:each in="${expansionInstance?.expansionCodes?}" var="e">
-    <li><g:link controller="expansionCode" action="show" id="${e.id}">${e?.encodeAsHTML()}</g:link></li>
-</g:each>
-<li class="add">
-<g:link controller="expansionCode" action="create" params="['expansion.id': expansionInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'expansionCode.label', default: 'ExpansionCode')])}</g:link>
-</li>
-</ul>
-
-</div>
-

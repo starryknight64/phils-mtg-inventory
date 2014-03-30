@@ -155,8 +155,11 @@ class ImportDBController {
             def expansionCards = expansionJSON.cards
             status += out "$expansionName<br>"
 
-            Expansion expansion = Expansion.findByName( expansionName ) ?: new Expansion(name: expansionName, releaseDate: expansionReleaseDate, totalCards: expansionCards?.size()).save()
+            Expansion expansion = Expansion.findByCode( expansionCode ) ?: new Expansion(name: expansionName, code: expansionCode, releaseDate: expansionReleaseDate, totalCards: expansionCards?.size()).save()
             if( forceUpdate ) {
+				if( expansion.name != expansionName ) {
+					expansion.name = expansionName
+				}
                 if( expansion.releaseDate != expansionReleaseDate ) {
                     expansion.releaseDate = expansionReleaseDate
                 }
@@ -167,9 +170,7 @@ class ImportDBController {
                     expansion.save()
                 }
             }
-            
-            ExpansionCode expCode = ExpansionCode.findByCode( expansionCode ) ?: new ExpansionCode( author: "mtgsalvation", code: expansionCode, expansion: expansion ).save()
-
+			
             for( Map expCard : expansionCards ) {
                 def cardName = expCard.get( "name" )
                 def manaCost = expCard.get( "manaCost" ) ?: ""

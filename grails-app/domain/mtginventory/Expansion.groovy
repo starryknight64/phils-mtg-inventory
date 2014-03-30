@@ -6,24 +6,17 @@ class Expansion {
     }
 
     String name
-    String symbol
-    Date preReleaseDate
+	String code
     Date releaseDate
     Integer totalCards
 
-    static hasMany = [expansionCards: ExpansionCard,
-                      expansionCodes: ExpansionCode]
+    static hasMany = [expansionCards: ExpansionCard]
 
     static constraints = {
         name unique: true
-        symbol nullable: true
-        preReleaseDate nullable: true
+        code unique: true
         releaseDate nullable: true
         totalCards nullable: true
-    }
-    
-    ExpansionCode code( String code ) {
-        expansionCodes.find{ it.code == code }
     }
 
     String toString() {

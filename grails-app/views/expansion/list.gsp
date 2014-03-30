@@ -19,6 +19,8 @@
 					
 						<g:sortableColumn property="name" title="${message(code: 'expansion.name.label', default: 'Name')}" />
 					
+                        <g:sortableColumn property="code" title="${message(code: 'expansion.code.label', default: 'Code')}" />					
+					
 						<g:sortableColumn property="symbol" title="${message(code: 'expansion.symbol.label', default: 'Symbol')}" />
 					
 						<g:sortableColumn property="releaseDate" title="${message(code: 'expansion.releaseDate.label', default: 'Release Date')}" />
@@ -32,6 +34,8 @@
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
 						<td><g:link controller="expansionCard" action="list" params="[expansionID: expansionInstance.id]">${fieldValue(bean: expansionInstance, field: "name")}</g:link></td>
+					
+					    <td>${expansionInstance.code}</td>
 					
 						<td><mtg:renderExpansionIcon expansion="${expansionInstance}" /></td>
 					
