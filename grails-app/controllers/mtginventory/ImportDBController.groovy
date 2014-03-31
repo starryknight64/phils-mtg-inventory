@@ -282,7 +282,7 @@ class ImportDBController {
                             expansionCard.rarity = cardRarity
                         }
                         if( expansionCard.isDirty() ) {
-                            status += out "        updated!"
+                            status += out "        updated!<br>"
                             expansionCard.save()
                         }
                     }

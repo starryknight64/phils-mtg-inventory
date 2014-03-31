@@ -107,6 +107,15 @@ img.card-image {
 	background-color: #ccc;
 }
 
+.other-expansions tr td:first-child {
+    width: 1px;
+    text-align: right;
+}
+
+.other-expansions tr td:last-child {
+    padding-left: 10px
+}
+
 table #searchForm {
 	padding-top: 25px;
 }

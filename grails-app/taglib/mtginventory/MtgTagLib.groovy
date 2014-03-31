@@ -87,7 +87,11 @@ class MtgTagLib {
     def renderExpansionCardImage = { attrs ->
         def expansionCard = attrs.expansionCard
 		def width = attrs.width ?: "200px"
-        def img = """<img src="http://mtgimage.com/set/${expansionCard.expansion.code}/${expansionCard.imageName}.jpg" class="card-image" width="${width}">"""
+		def imgURL = "http://mtgimage.com/set/${expansionCard.expansion.code}/${expansionCard.imageName}.jpg"
+		if( !expansionCard.imageName ) {
+			imgURL = "http://mtgimage.com/card/${expansionCard.card.name}.jpg"
+		}
+        def img = """<img src="${imgURL}" class="card-image" width="${width}">"""
         out << """${g.link( controller:"ExpansionCard", action:"show", id:expansionCard.id, img)}"""
     }
 	
@@ -103,11 +107,25 @@ class MtgTagLib {
 		def expansion = expansionCard?.expansion ?: attrs.expansion
 		def expStyle = attrs.expStyle
 		def withSymbol = attrs.withSymbol
+		def tabulated = attrs.tabulated
 		if( withSymbol ) {
-			out << renderExpansionIcon( expansion: expansion )
-			out << " "
+			if( tabulated ) {
+				out << "<td>"
+				out << renderExpansionIcon( expansion: expansion )
+				out << "</td>"
+			} else {
+				out << renderExpansionIcon( expansion: expansion )
+				out << " "
+			}
+		}
+		
+		if( tabulated ) {
+			out << "<td>"
 		}
 		out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}" class="expansion-name">${expansion.name}</a>"""
+		if( tabulated ){
+			out << "</td>"
+		}
 	}
 	
 	def renderIllustrator = { attrs ->

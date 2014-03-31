@@ -22,6 +22,7 @@ class ExpansionCard {
         card unique: ["card","expansion","collectorNumber"]
         flavorText nullable: true
         collectorNumber nullable: true
+		imageName nullable: true
     }
 
     String toString() {

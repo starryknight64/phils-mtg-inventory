@@ -205,11 +205,13 @@
                                     <li class="fieldcontain">
                                         <span id="expansionCards-label" class="property-label"><g:message code="card.expansionCards.label" default="Expansion Cards" /></span>
                                         <span class="property-value" aria-labelledby="expansionCards-label"> 
-                                            <table>
-                                                <g:each in="${cardInstance.expansionCards.sort{ a,b -> b.expansion.releaseDate <=> a.expansion.releaseDate}}" var="e">
-                                                <g:if test="${expansionCardInstance != e}">
-                                                        <tr style="height: 27px;"><td style="text-align: right; width: 40px;"><g:link controller="expansionCard" action="show" id="${e.id}"><g:img dir="images/expansions" file="${e.expansion.name.replace('&','and').replace(':','').replace(' Core Set','').replace('"','')}_${e.rarity.name.replace("Basic Land","Common").replace("Mythic Rare","Mythic")}.gif" style="max-width: 30px; max-height: 20px; padding-right: 10px;"/></g:link></td><td><g:link controller="expansionCard" action="show" id="${e.id}">${e?.expansion?.encodeAsHTML()}</g:link></td></tr>
-                                                    </g:if>
+                                            <table class="other-expansions">
+                                                <g:each in="${cardInstance.expansionCards.sort{ a,b -> b.expansion.releaseDate <=> a.expansion.releaseDate}}">
+	                                                <g:if test="${expansionCardInstance != it}">
+                                                        <tr>
+	                                                       <mtg:renderExpansion tabulated="${true}" withSymbol="${true}" expansionCard="${it}" />
+	                                                    </tr>
+	                                                </g:if>
                                                 </g:each>
                                             </table>
                                         </span>
