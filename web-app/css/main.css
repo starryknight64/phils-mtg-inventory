@@ -95,7 +95,7 @@ img.card-image {
 	background-color: #ccc;
 }
 
-.card-pt,.card-loyalty {
+.card-pt,.card-loyalty,.card-hand-life {
 	border: 1px solid #ccc;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;

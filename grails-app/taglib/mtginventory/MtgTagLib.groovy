@@ -174,7 +174,11 @@ class MtgTagLib {
 				out << "<span class='card-illustrator'>${g.img( dir:"images", file:"paintbrush_black.png", style:"max-width: 37px; top: 2px; position: relative;")} ${expansionCard.illustrator}</span>"
 			}
             if( card.power && card.toughness ) {
-                out << "<span class='card-pt'><b>${card.power} / ${card.toughness}</b></span>"
+				if( card.types.name.contains("Vanguard") ) {
+					out << "<span class='card-hand-life'><i>Hand Modifier:</i> <b>${card.power.toInteger() >= 0 ? "+" : ""}${card.power}</b> / <i>Life Modifier:</i> <b>${card.toughness.toInteger() >= 0 ? "+" : ""}${card.toughness}</b></span>"
+				} else {
+                	out << "<span class='card-pt'><b>${card.power} / ${card.toughness}</b></span>"
+				}
             } else if( card.loyalty ) {
                 out << "<span class='card-loyalty'><b><i>Loyalty:</i> ${card.loyalty}</b></span>"
             }

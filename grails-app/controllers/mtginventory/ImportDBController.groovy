@@ -182,8 +182,8 @@ class ImportDBController {
                 def flavorText = expCard.get( "flavor" )
                 def artist = expCard.get( "artist" )
                 def number = expCard.get( "number" )
-                def power = expCard.get( "power" )
-                def toughness = expCard.get( "toughness" )
+                def power = expCard.get( "power" ) ?: expCard.get( "hand" )
+                def toughness = expCard.get( "toughness" ) ?: expCard.get( "life" )
                 def loyalty = expCard.get( "loyalty" )
 				def imageName = expCard.get( "imageName" )
                 status += out "    $cardName<br>"

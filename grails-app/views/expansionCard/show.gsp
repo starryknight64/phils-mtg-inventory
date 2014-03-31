@@ -146,21 +146,16 @@
                                 </li>
                             </g:if>
 
-                            <g:if test="${cardInstance?.power}">
+                            <g:if test="${cardInstance?.power && cardInstance?.toughness}">
                                 <li class="fieldcontain">
-                                    <span id="power-label" class="property-label"><g:message code="card.power.label" default="Power" /></span>
-
-                                    <span class="property-value" aria-labelledby="power-label"><g:fieldValue bean="${cardInstance}" field="power"/></span>
-
-                                </li>
-                            </g:if>
-
-                            <g:if test="${cardInstance?.toughness}">
-                                <li class="fieldcontain">
-                                    <span id="toughness-label" class="property-label"><g:message code="card.toughness.label" default="Toughness" /></span>
-
-                                    <span class="property-value" aria-labelledby="toughness-label"><g:fieldValue bean="${cardInstance}" field="toughness"/></span>
-
+                                    <g:if test="${cardInstance?.types?.name?.contains( "Vanguard" )}">
+                                        <span id="hand-life-label" class="property-label">Hand/Life</span>
+                                        <span class="property-value" aria-labelledby="hand-life-label"><i>Hand Modifier:</i> <b>${cardInstance.power >= 0 ? "+" : "-"}${cardInstance.power}</b> / <i>Life Modifier:</i> <b>${cardInstance.toughness >= 0 ? "+" : "-"}${cardInstance.toughness}</b></span>
+                                    </g:if>
+                                    <g:else>
+	                                    <span id="power-toughness-label" class="property-label">P/T</span>
+	                                    <span class="property-value" aria-labelledby="power-toughness-label">${cardInstance.power} / ${cardInstance.toughness}</span>
+                                    </g:else>
                                 </li>
                             </g:if>
 
