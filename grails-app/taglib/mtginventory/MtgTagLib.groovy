@@ -96,10 +96,14 @@ class MtgTagLib {
     }
 	
 	def renderExpansionIcon = { attrs ->
-		def expansion = attrs.expansion
-		def expansionName = expansion?.name?.replace('&','and')?.replace(':','')?.replace(' Core Set','')?.replace('"','')
-		def expansionRarity = attrs.expansionCard?.rarity?.name?.replace("Basic Land","Common")?.replace("Mythic Rare","Mythic") ?: "Common"
-		out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}" class="expansion-icon">${g.img( dir:"images/expansions", file:"${expansionName}_${expansionRarity}.gif")}</a>"""
+		def expansion = attrs.expansion ?: attrs.expansionCard?.expansion
+		def rarity = attrs.expansionCard?.rarity?.name?.replace("Basic Land","c")?.substring(0, 1) ?: "c"
+		def img = """<img src="http://mtgimage.com/symbol/set/${expansion.code}/${rarity}/32.png">"""
+		if( attrs.linkToCard ) {
+			out << """<a href="/MtGInventory/ExpansionCard/show/${attrs.expansionCard.id}" class="expansion-icon">${img}</a>"""
+		} else {
+			out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}" class="expansion-icon">${img}</a>"""
+		}
 	}
 	
 	def renderExpansion = { attrs ->
@@ -108,21 +112,25 @@ class MtgTagLib {
 		def expStyle = attrs.expStyle
 		def withSymbol = attrs.withSymbol
 		def tabulated = attrs.tabulated
+		def linkToCard = attrs.linkToCard
 		if( withSymbol ) {
+			def icon = renderExpansionIcon( expansion: expansion, expansionCard: expansionCard, linkToCard: linkToCard )
 			if( tabulated ) {
-				out << "<td>"
-				out << renderExpansionIcon( expansion: expansion )
-				out << "</td>"
+				out << "<td>${icon}</td>"
 			} else {
-				out << renderExpansionIcon( expansion: expansion )
-				out << " "
+				out << "${icon} "
 			}
 		}
 		
 		if( tabulated ) {
 			out << "<td>"
 		}
-		out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}" class="expansion-name">${expansion.name}</a>"""
+		if( linkToCard ) {
+			out << """<a href="/MtGInventory/ExpansionCard/show/${expansionCard.id}" class="expansion-name">"""
+		} else {
+			out << """<a href="/MtGInventory/ExpansionCard/list?expansionID=${expansion.id}" class="expansion-name">"""
+		}
+		out << "${expansion.name}</a>"
 		if( tabulated ){
 			out << "</td>"
 		}
@@ -159,7 +167,7 @@ class MtgTagLib {
             }
             out << "</i>"
 			out << "<i class='expansion'>"
-			out << renderExpansion( expansion: expansionCard.expansion, withSymbol: true )
+			out << renderExpansion( expansion: expansionCard.expansion, expansionCard: expansionCard, withSymbol: true )
 			out << "</i>"
             if( card.text ) {
                 out << "<hr><b>"

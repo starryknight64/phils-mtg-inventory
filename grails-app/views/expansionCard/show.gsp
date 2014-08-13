@@ -204,7 +204,7 @@
                                                 <g:each in="${cardInstance.expansionCards.sort{ a,b -> b.expansion.releaseDate <=> a.expansion.releaseDate}}">
 	                                                <g:if test="${expansionCardInstance != it}">
                                                         <tr>
-	                                                       <mtg:renderExpansion tabulated="${true}" withSymbol="${true}" expansionCard="${it}" />
+	                                                       <mtg:renderExpansion tabulated="${true}" withSymbol="${true}" linkToCard="${true}" expansionCard="${it}" />
 	                                                    </tr>
 	                                                </g:if>
                                                 </g:each>
