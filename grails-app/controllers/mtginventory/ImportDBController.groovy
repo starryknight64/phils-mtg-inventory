@@ -205,7 +205,7 @@ class ImportDBController {
 					def rarity = expCard.get( "rarity" )
 					def text = expCard.get( "text" )
 					def flavorText = expCard.get( "flavor" )
-					def artist = expCard.get( "artist" )
+					def artist = expCard.get( "artist" ).replace("“","\"").replace("”", "\"")
 					def number = expCard.get( "number" )
 					def power = expCard.get( "power" ) ?: expCard.get( "hand" )
 					def toughness = expCard.get( "toughness" ) ?: expCard.get( "life" )
@@ -263,11 +263,21 @@ class ImportDBController {
 					}
 
 					legalityMapping.each{k,v->
-						Legality legality = Legality.findByName(k) ?: new Legality(name: k).save()
-						Boolean isBanned = (v == "Banned")
-						if( isBanned || v == "Restricted" ) {
-							RestrictedCard restrictedCard = RestrictedCard.findByCardAndLegality(card, legality) ?: new RestrictedCard(card:card, banned:isBanned, Legality:legality).save()
+						Legality legality = Legality.findByName(k) ?: new Legality(name: k)
+						if(!legality.save()){
+							legality.errors.each { println it }
 						}
+						CardLegalityType cardLegalityType = CardLegalityType.findByName(v) ?: new CardLegalityType(name: v)
+						if( !cardLegalityType.save() ){
+							cardLegalityType.errors.each { println it }
+						}
+						if( cardLegalityType.name != "Legal" ) {
+							CardLegality cardLegality = CardLegality.findByCardAndLegality(card, legality) ?: new CardLegality(card:card, cardLegalityType:cardLegalityType, legality:legality)
+							if(!cardLegality.save()){
+								cardLegality.errors.each { println it }
+							}
+						}
+						
 						if( !legalities.contains( legality ) ) {
 							legalities.add( legality )
 						}
