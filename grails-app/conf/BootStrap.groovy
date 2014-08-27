@@ -97,9 +97,10 @@ class BootStrap {
             System.out.println "Version of DB was $mtgJSONVersion, which differs from internal DB of $dbVersion.value!"
             dbVersion.value = mtgJSONVersion
             dbVersion.save()
-            Thread.start {
-                new ImportDBController().doImport( null, true )
-            }
+            //Thread.start {
+			System.out.println "http://localhost:8080/MtGInventory/ImportDB/doImport"
+            //new ImportDBController().doImport( null, false )
+            //}
         } else {
             System.out.println "Versions match!"
         }

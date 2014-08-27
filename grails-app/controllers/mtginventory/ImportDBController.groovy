@@ -122,7 +122,10 @@ class ImportDBController {
 
 	def out( String text ) {
 		System.out.println text
-		render text
+		try {
+			render text
+		} catch(Exception ex){
+		}
 		text
 	}
 
@@ -149,13 +152,21 @@ class ImportDBController {
 			def expansionJSON = updateThisExp ? set : set.value
 			def expansionName = expansionJSON.name
 			def expansionCode = expansionJSON.code
-			def expansionOldCode = expansionJSON.oldCode
 			def expansionReleaseDate = Date.parse("yyyy-MM-dd", expansionJSON.releaseDate)
 			def expansionCards = expansionJSON.cards
 			status += out "$expansionName<br>"
 
-			Expansion expansion = Expansion.findByCodeOrCode( expansionCode, expansionOldCode ) ?: new Expansion(name: expansionName, code: expansionCode, releaseDate: expansionReleaseDate, totalCards: expansionCards?.size()).save()
+			Expansion expansion = Expansion.findByCodeOrCode( expansionCode, expansionCode.startsWith("p") ? expansionCode.substring(1) : expansionCode )
+			if( !expansion ){
+				expansion = new Expansion(name: expansionName, code: expansionCode, releaseDate: expansionReleaseDate, totalCards: expansionCards?.size())
+				if( !expansion.save() ) {
+					expansion.errors.each { println it }
+				}
+			}
 
+			if( !expansion ) {
+				def i=1
+			}
 			def jsonHash = expansion.jsonHash()
 			if( jsonHash.value != "${expansionJSON.hashCode()}" || forceUpdate ) {
 				jsonHash.value = "${expansionJSON.hashCode()}"
@@ -312,9 +323,11 @@ class ImportDBController {
 						updatedLegalities = true
 					}
 				}
-				expansion.legalities?.each {
-					if( !legalities.contains( it ) ) {
-						expansion.removeFromLegalities( it )
+				def expansionLegalities = expansion.legalities?.toArray()
+				for(int i=0; i<expansionLegalities?.size(); i++) {
+					def legality = expansionLegalities[i]
+					if( legality && !legalities.contains( legality ) ) {
+						expansion.removeFromLegalities( legality )
 						updatedLegalities = true
 					}
 				}
