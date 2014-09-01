@@ -98,7 +98,7 @@ class BootStrap {
             dbVersion.value = mtgJSONVersion
             dbVersion.save()
             //Thread.start {
-			System.out.println "http://localhost:8080/MtGInventory/ImportDB/doImport"
+			System.out.println "${grailsApplication.config.grails.serverURL}/MtGInventory/ImportDB/doImport"
             //new ImportDBController().doImport( null, false )
             //}
         } else {

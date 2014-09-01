@@ -15,44 +15,6 @@ import groovyx.net.http.ContentType
 class MtgTagLib {
     static namespace = "mtg"
 	
-	def renderPrice = { attrs ->
-		def expansionCard = attrs.expansionCard
-		def priceSource = attrs.priceSource
-		if( expansionCard && priceSource ) {
-			ExpansionCardPrice price = ExpansionCardPrice.findByExpansionCardAndSource( expansionCard, priceSource )
-			if( !price || price?.lastUpdated?.plus(1) < new Date() ) {
-				def pricingREST = new HTTPBuilder( priceSource.rest )
-				def q = [cardname:"${expansionCard.card.name}",setname:"${expansionCard.expansion.name}"]
-				def pricing = []
-				try {
-					pricing = pricingREST.get( query: q, contentType: ContentType.JSON )
-				} catch(Exception ex){}
-				def low = pricing.size() > 2 ? pricing.get(0) : null
-				def median = pricing.size() > 1 ? pricing.get(1) : pricing.size() == 1 ? pricing.get(0) : null 
-				def high = pricing.size() > 2 ? pricing.get(2) : null
-				if( price ) {
-					price.source = priceSource
-					price.expansionCard = expansionCard
-					price.low = low
-					price.median = median
-					price.high = high
-					if( price.isDirty() ) {
-						price.save()
-					}
-				} else {
-					price = new ExpansionCardPrice( source: priceSource, expansionCard:expansionCard, low:low,median:median,high:high ).save()
-				}
-			}
-			out << """
-				<tr>
-					<td><a href="${priceSource.website}" target="_blank">${priceSource.name}</a></td>
-					<td class="price">${price?.low ?: ""}</td>
-					<td class="price">${price?.median ?: ""}</td>
-					<td class="price">${price?.high ?: ""}</td>
-				</tr>"""
-		}
-	}
-	
 	def renderRandomCard = { attrs ->
 		Random rand = new Random()
 		def max = Card.count

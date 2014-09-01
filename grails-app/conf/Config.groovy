@@ -62,6 +62,7 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
+		grails.serverURL = "http://phillip-pc:8080/MtGInventory"
     }
     production {
         grails.logging.jul.usebridge = false

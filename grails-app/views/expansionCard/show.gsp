@@ -9,6 +9,7 @@
         <meta name="layout" content="main">
         <g:set var="entityName" value="${message(code: 'expansionCard.label', default: 'ExpansionCard')}" />
         <title><g:message code="default.show.label" args="[entityName]" /></title>
+        <g:javascript src="expansionCard.js" />
     </head>
     <body>
             <div id="show-expansionCard" class="content scaffold-show" role="main">
@@ -75,9 +76,7 @@
                         <table class="card-pricing">
                             <thead><tr><th>Seller</th><th>Low</th><th>Mid</th><th>High</th></tr></thead>
                             <tbody>
-                                <g:each in="${PriceSource.list()}">
-                                    <mtg:renderPrice expansionCard="${expansionCardInstance}" priceSource="${it}" />
-                                </g:each>
+                               <tr><td colspan="4" style="text-align: center;"><g:img dir="images" file="spinner.gif" /></td></tr>
                             </tbody>
                         </table>
                     </td>
