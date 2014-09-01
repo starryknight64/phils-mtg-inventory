@@ -54,6 +54,7 @@ class BootStrap {
             new CardRarity(name: "Uncommon", acronym: "U").save()
             new CardRarity(name: "Rare", acronym: "R").save()
             new CardRarity(name: "Mythic Rare", acronym: "M").save()
+            new CardRarity(name: "Special", acronym: "S").save()
 		}
 		
 		if( !CardTypeType.count() ) {

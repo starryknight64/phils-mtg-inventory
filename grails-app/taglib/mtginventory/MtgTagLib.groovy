@@ -4,6 +4,8 @@ import java.util.Random
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.net.URLEncoder
+import java.net.HttpURLConnection
+import java.net.URL
 import groovy.json.JsonSlurper
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.ContentType
@@ -60,7 +62,8 @@ class MtgTagLib {
 	def renderExpansionIcon = { attrs ->
 		def expansion = attrs.expansion ?: attrs.expansionCard?.expansion
 		def rarity = attrs.expansionCard?.rarity?.name?.replace("Basic Land","c")?.substring(0, 1) ?: "c"
-		def img = """<img src="http://mtgimage.com/symbol/set/${expansion.code}/${rarity}/32.png">"""
+		def imgURL = getImageURL(expansionCode:expansion.code,rarity:rarity) 
+		def img = """<img src="${imgURL}">"""
 		if( attrs.linkToCard ) {
 			out << """<a href="/MtGInventory/ExpansionCard/show/${attrs.expansionCard.id}" class="expansion-icon">${img}</a>"""
 		} else {
@@ -68,6 +71,30 @@ class MtgTagLib {
 		}
 	}
 	
+	def getImageURL = { attrs ->
+		def expansionCode = attrs.expansionCode
+		def rarity = (attrs.rarity ?: "c").toLowerCase()
+        InputStream inputFile = getClass().classLoader.getResourceAsStream("setimages.json")
+        def setImages = new JsonSlurper().parseText(inputFile.text)
+        setImages.each { expCode, rarities ->
+			if(expansionCode == expCode) {
+				def url = "http://mtgimage.com/symbol/set/${expansionCode}/"
+				if(rarities.toLowerCase().contains(rarity)){
+					url += rarity
+				} else if(rarities != "") {
+					url += rarities.split(" ")[0]
+				} else {
+					out << ""
+					return
+				}
+				url += "/32.png"
+				out << url
+				return
+			}
+		}
+		out << ""
+	}
+
 	def renderExpansion = { attrs ->
 		def expansionCard = attrs.expansionCard
 		def expansion = expansionCard?.expansion ?: attrs.expansion
