@@ -7,6 +7,7 @@ class Expansion {
 	String code
 	Date releaseDate
 	Integer totalCards
+	String rarities
 
 	static hasMany = [expansionCards: ExpansionCard, legalities: Legality]
 
@@ -15,6 +16,7 @@ class Expansion {
 		code unique: true
 		releaseDate nullable: true
 		totalCards nullable: true
+		rarities nullable: true
 	}
 
 	Meta jsonHash(){

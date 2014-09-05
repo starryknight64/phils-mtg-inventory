@@ -31,6 +31,7 @@ class DeckController {
 			inventoryCard.amount += add
 			inventoryCard.save()
 			redirect( action:"show", id:deck.id )
+			return
 		} else {
 			if( addCardAs == "Main Deck" || addCardAs == "Sideboard" ) {
 				InventoryCard inventoryCard = new InventoryCard( expansionCard: expansionCard, amount: add ).save()

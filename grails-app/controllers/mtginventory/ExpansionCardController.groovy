@@ -8,6 +8,8 @@ import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.ContentType
 
 class ExpansionCardController {
+	
+	def pricesService
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
@@ -19,19 +21,20 @@ class ExpansionCardController {
 		def json = [:]
 		def expansionCard = ExpansionCard.get(id)
 		if( expansionCard ) {
-			PriceSource.list().each {priceSource ->
+			for( def priceSource : PriceSource.list() ) {
 				ExpansionCardPrice price = ExpansionCardPrice.findByExpansionCardAndSource( expansionCard, priceSource )
+				def pricing = null
 				if( !price || price?.lastUpdated?.plus(1) < new Date() ) {
-					def pricingREST = new HTTPBuilder( priceSource.rest )
-					def q = [cardname:"${expansionCard.card.name}",setname:"${expansionCard.expansion.name}"]
-					def pricing = []
-					try {
-						pricing = pricingREST.get( query: q, contentType: ContentType.JSON )
-					} catch(Exception ex){
+					if( priceSource.name == "TCGPlayer" ) {
+						pricing = pricesService.getTCGPlayerPrices(expansionCard.card,expansionCard.expansion)
+					} else if( priceSource.name == "eBay" ) {
+						pricing = pricesService.getEbayPrices(expansionCard.card)
+					} else if( priceSource.name == "Channel Fireball" ) {
+						pricing = pricesService.getChannelFireballPrices(expansionCard.card,expansionCard.expansion)
 					}
-					def low = pricing.size() > 2 ? pricing.get(0) : null
-					def median = pricing.size() > 1 ? pricing.get(1) : pricing.size() == 1 ? pricing.get(0) : null
-					def high = pricing.size() > 2 ? pricing.get(2) : null
+					def low = pricing?.low ?: null
+					def median = pricing?.median ?: null
+					def high = pricing?.high ?: null
 					if( price ) {
 						price.source = priceSource
 						price.expansionCard = expansionCard
@@ -45,7 +48,7 @@ class ExpansionCardController {
 						price = new ExpansionCardPrice( source: priceSource, expansionCard:expansionCard, low:low,median:median,high:high ).save()
 					}
 				}
-				json.put(priceSource.name,["low":price?.low ?: "","median":price?.median ?: "","high":price?.high ?: ""])
+				json.put(priceSource.name,["url": pricing?.url ?: priceSource.website, "low":price?.low ?: "","median":price?.median ?: "","high":price?.high ?: ""])
 			}
 		}
 		render json as JSON

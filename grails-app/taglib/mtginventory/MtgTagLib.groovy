@@ -62,7 +62,7 @@ class MtgTagLib {
 	def renderExpansionIcon = { attrs ->
 		def expansion = attrs.expansion ?: attrs.expansionCard?.expansion
 		def rarity = attrs.expansionCard?.rarity?.name?.replace("Basic Land","c")?.substring(0, 1) ?: "c"
-		def imgURL = getImageURL(expansionCode:expansion.code,rarity:rarity) 
+		def imgURL = getImageURL(expansion:expansion,rarity:rarity) 
 		def img = """<img src="${imgURL}">"""
 		if( attrs.linkToCard ) {
 			out << """<a href="/MtGInventory/ExpansionCard/show/${attrs.expansionCard.id}" class="expansion-icon">${img}</a>"""
@@ -72,25 +72,19 @@ class MtgTagLib {
 	}
 	
 	def getImageURL = { attrs ->
-		def expansionCode = attrs.expansionCode
+		def expansion = attrs.expansion
 		def rarity = (attrs.rarity ?: "c").toLowerCase()
-        InputStream inputFile = getClass().classLoader.getResourceAsStream("setimages.json")
-        def setImages = new JsonSlurper().parseText(inputFile.text)
-        setImages.each { expCode, rarities ->
-			if(expansionCode == expCode) {
-				def url = "http://mtgimage.com/symbol/set/${expansionCode}/"
-				if(rarities.toLowerCase().contains(rarity)){
-					url += rarity
-				} else if(rarities != "") {
-					url += rarities.split(" ")[0]
+		if( expansion ) {
+			if( !expansion.rarities?.contains( rarity ) ) {
+				if( expansion.rarities ) {
+					rarity = expansion.rarities[0]
 				} else {
-					out << ""
+					out << "/MtGInventory/images/unknown-set-icon.png"
 					return
 				}
-				url += "/32.png"
-				out << url
-				return
 			}
+			out << "http://mtgimage.com/symbol/set/${expansion.code}/${rarity}/32.png"
+			return
 		}
 		out << ""
 	}
