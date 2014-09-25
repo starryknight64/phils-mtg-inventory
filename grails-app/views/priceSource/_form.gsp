@@ -18,11 +18,3 @@
 	<g:field type="url" name="website" value="${priceSourceInstance?.website}"/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: priceSourceInstance, field: 'rest', 'error')} ">
-	<label for="rest">
-		<g:message code="priceSource.rest.label" default="Rest" />
-		
-	</label>
-	<g:field type="url" name="rest" value="${priceSourceInstance?.rest}"/>
-</div>
-

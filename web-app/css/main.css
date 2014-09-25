@@ -28,6 +28,7 @@
 
 .card-pricing td {
 	white-space: nowrap;
+	padding-left: 10px;
 }
 
 td.price {

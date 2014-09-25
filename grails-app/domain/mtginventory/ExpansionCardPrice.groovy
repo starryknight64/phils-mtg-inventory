@@ -8,6 +8,7 @@ class ExpansionCardPrice {
 	String low
 	String median
 	String high
+	String url
 
 	static belongsTo = ExpansionCard
 
@@ -15,5 +16,6 @@ class ExpansionCardPrice {
 		low nullable: true
 		median nullable: true
 		high nullable: true
+		url(url: true)
 	}
 }

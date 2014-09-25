@@ -85,9 +85,15 @@ class BootStrap {
 		}
 
 		if( !PriceSource.count() ) {
-			new PriceSource(name:"TCGPlayer",website:"http://www.tcgplayer.com",rest:"http://magictcgprices.appspot.com/api/tcgplayer/price.json").save()
-			new PriceSource(name:"eBay",website:"http://www.ebay.com",rest:"http://magictcgprices.appspot.com/api/ebay/price.json").save()
-			new PriceSource(name:"Channel Fireball",website:"http://www.channelfireball.com",rest:"http://magictcgprices.appspot.com/api/cfb/price.json").save()
+			new PriceSource(name:"TCGPlayer",website:"http://www.tcgplayer.com").save()
+			new PriceSource(name:"eBay",website:"http://www.ebay.com").save()
+			new PriceSource(name:"Channel Fireball",website:"http://www.channelfireball.com").save()
+			new PriceSource(name:"Amazon",website:"http://www.amazon.com").save()
+			new PriceSource(name:"Troll and Toad",website:"http://www.trollandtoad.com").save()
+			new PriceSource(name:"Strike Zone Online",website:"http://shop.strikezoneonline.com").save()
+			new PriceSource(name:"Hot Sauce Games",website:"http://www.hotsaucegames.com").save()
+			new PriceSource(name:"CCG House",website:"http://www.ccghouse.com").save()
+			new PriceSource(name:"ABU Games",website:"http://www.abugames.com").save()
 		}
 
 		def mtgJSON = new HTTPBuilder("http://mtgjson.com/json/")

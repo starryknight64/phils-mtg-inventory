@@ -28,8 +28,6 @@
 					
 						<g:sortableColumn property="website" title="${message(code: 'priceSource.website.label', default: 'Website')}" />
 					
-						<g:sortableColumn property="rest" title="${message(code: 'priceSource.rest.label', default: 'Rest')}" />
-					
 					</tr>
 				</thead>
 				<tbody>
@@ -39,8 +37,6 @@
 						<td><g:link action="show" id="${priceSourceInstance.id}">${fieldValue(bean: priceSourceInstance, field: "name")}</g:link></td>
 					
 						<td>${fieldValue(bean: priceSourceInstance, field: "website")}</td>
-					
-						<td>${fieldValue(bean: priceSourceInstance, field: "rest")}</td>
 					
 					</tr>
 				</g:each>

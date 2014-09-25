@@ -1,6 +1,7 @@
 package mtginventory
 
 import org.springframework.dao.DataIntegrityViolationException
+import grails.converters.*
 
 class PriceSourceController {
 
@@ -9,6 +10,10 @@ class PriceSourceController {
     def index() {
         redirect(action: "list", params: params)
     }
+	
+	def all() {
+		render PriceSource.list() as JSON
+	}
 
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)

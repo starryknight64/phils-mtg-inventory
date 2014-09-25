@@ -4,11 +4,13 @@ class PriceSource {
 	
 	String name
 	String website
-	String rest
+	
+	static mapping = {
+        sort "name"
+    }
 
     static constraints = {
 		name unique: true
 		website url: true
-		rest url: true
     }
 }

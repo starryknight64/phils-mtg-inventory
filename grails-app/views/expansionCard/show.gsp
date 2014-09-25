@@ -76,7 +76,7 @@
                         <table class="card-pricing">
                             <thead><tr><th>Seller</th><th>Low</th><th>Mid</th><th>High</th></tr></thead>
                             <tbody>
-                               <tr><td colspan="4" style="text-align: center;"><g:img dir="images" file="spinner.gif" /></td></tr>
+                               <tr class="myspinner"><td colspan="4" style="text-align: center;"><g:img dir="images" file="spinner.gif" /></td></tr>
                             </tbody>
                         </table>
                     </td>

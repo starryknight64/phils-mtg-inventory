@@ -17,27 +17,21 @@ class ExpansionCardController {
         redirect(action: "list", params: params)
     }
 
-	def prices(Long id){
+	def prices(Long id,String source){
 		def json = [:]
 		def expansionCard = ExpansionCard.get(id)
 		if( expansionCard ) {
-			for( def priceSource : PriceSource.list() ) {
-				ExpansionCardPrice price = ExpansionCardPrice.findByExpansionCardAndSource( expansionCard, priceSource )
+			def ps = PriceSource.findByName(source)
+			if( ps ) {
 				def pricing = null
+				ExpansionCardPrice price = ExpansionCardPrice.findByExpansionCardAndSource( expansionCard, ps )
 				if( !price || price?.lastUpdated?.plus(1) < new Date() ) {
-					if( priceSource.name == "TCGPlayer" ) {
-						pricing = pricesService.getTCGPlayerPrices(expansionCard.card,expansionCard.expansion)
-					} else if( priceSource.name == "eBay" ) {
-						pricing = pricesService.getEbayPrices(expansionCard.card)
-					} else if( priceSource.name == "Channel Fireball" ) {
-						pricing = pricesService.getChannelFireballPrices(expansionCard.card,expansionCard.expansion)
-					}
+					def fnName = ps.name.toLowerCase().replaceAll( /\b[a-z]/, { it.toUpperCase() }).replace(" ", "")
+					pricing = pricesService."get${fnName}Prices"(expansionCard.card,expansionCard.expansion)
 					def low = pricing?.low ?: null
 					def median = pricing?.median ?: null
 					def high = pricing?.high ?: null
 					if( price ) {
-						price.source = priceSource
-						price.expansionCard = expansionCard
 						price.low = low
 						price.median = median
 						price.high = high
@@ -45,10 +39,40 @@ class ExpansionCardController {
 							price.save()
 						}
 					} else {
-						price = new ExpansionCardPrice( source: priceSource, expansionCard:expansionCard, low:low,median:median,high:high ).save()
+						price = new ExpansionCardPrice( source: ps, expansionCard:expansionCard, low:low,median:median,high:high,url:pricing.url ).save()
 					}
 				}
-				json.put(priceSource.name,["url": pricing?.url ?: priceSource.website, "low":price?.low ?: "","median":price?.median ?: "","high":price?.high ?: ""])
+				json = [(ps.name):["url": price?.url ?: priceSource.website, "low":price?.low ?: "","median":price?.median ?: "","high":price?.high ?: ""]]
+			} else {
+				for( def priceSource : PriceSource.list() ) {
+					ExpansionCardPrice price = ExpansionCardPrice.findByExpansionCardAndSource( expansionCard, priceSource )
+					def pricing = null
+					if( !price || price?.lastUpdated?.plus(1) < new Date() ) {
+						if( priceSource.name == "TCGPlayer" ) {
+							pricing = pricesService.getTCGPlayerPrices(expansionCard.card,expansionCard.expansion)
+						} else if( priceSource.name == "eBay" ) {
+							pricing = pricesService.getEbayPrices(expansionCard.card      )
+						} else if( priceSource.name == "Channel Fireball" ) {
+							pricing = pricesService.getChannelFireballPrices(expansionCard.card,expansionCard.expansion)
+						}
+						def low = pricing?.low ?: null
+						def median = pricing?.median ?: null
+						def high = pricing?.high ?: null
+						if( price ) {
+							price.source = priceSource
+							price.expansionCard = expansionCard
+							price.low = low
+							price.median = median
+							price.high = high
+							if( price.isDirty() ) {
+								price.save()
+							}
+						} else {
+							price = new ExpansionCardPrice( source: priceSource, expansionCard:expansionCard, low:low,median:median,high:high ).save()
+						}
+					}
+					json.put(priceSource.name,["url": pricing?.url ?: priceSource.website, "low":price?.low ?: "","median":price?.median ?: "","high":price?.high ?: ""])
+				}
 			}
 		}
 		render json as JSON

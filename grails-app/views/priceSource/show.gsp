@@ -41,15 +41,6 @@
 				</li>
 				</g:if>
 			
-				<g:if test="${priceSourceInstance?.rest}">
-				<li class="fieldcontain">
-					<span id="rest-label" class="property-label"><g:message code="priceSource.rest.label" default="Rest" /></span>
-					
-						<span class="property-value" aria-labelledby="rest-label"><g:fieldValue bean="${priceSourceInstance}" field="rest"/></span>
-					
-				</li>
-				</g:if>
-			
 			</ol>
 			<g:form>
 				<fieldset class="buttons">
