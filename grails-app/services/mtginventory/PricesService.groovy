@@ -7,7 +7,7 @@ import org.codehaus.groovy.runtime.StackTraceUtils
 
 class PricesService {
 
-	def getAbuPrices(Card card, Expansion expansion) {
+	def getAbuGamesPrices(Card card, Expansion expansion) {
         def search = URLEncoder.encode(card.name,"UTF-8")
         def abuURL = "http://www.abugames.com/shop.cgi?command=search&edition=0&cardname=${search}&maxresults=400&displaystyle=list"
         def html = abuURL.toURL().getText()
@@ -354,7 +354,7 @@ class PricesService {
 
         def maxIndex = html.indexOf("More items related to")
 
-        def qtyPatterns = [ ~/(\d+)\s*[xX]/, ~/[xX]\s*(\d+)/ ]
+        def qtyPatterns = [ ~/(\d+)[xX]/, ~/[xX](\d+)/, ~/(\d+)\s+[xX]/, ~/[xX]\s+(\d+)/ ]
         def endNameIndex = 0
         for (i in 0 .. html.count("lvtitle")) {
             def startNameIndex = html.indexOf("lvtitle\">", endNameIndex) + "lvtitle\">".length()
@@ -371,8 +371,9 @@ class PricesService {
                 def matcher = qtyPattern.matcher(listingName)
                 if (matcher.find()) {
                     def qty2 = matcher.group(1).toInteger()
-                    if (qty2 > qty && (qty2 < 2010 || qty2 > 2016) && (qty2 < 1993 || qty2 > 1996)) {
+                    if ((qty2 < 2010 || qty2 > 2016) && (qty2 < 1993 || qty2 > 1996)) {
                         qty = qty2
+						break
                     }
                 }
             }

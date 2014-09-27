@@ -42,7 +42,7 @@ class ExpansionCardController {
 						price = new ExpansionCardPrice( source: ps, expansionCard:expansionCard, low:low,median:median,high:high,url:pricing.url ).save()
 					}
 				}
-				json = [(ps.name):["url": price?.url ?: priceSource.website, "low":price?.low ?: "","median":price?.median ?: "","high":price?.high ?: ""]]
+				json = ["sourceID":ps.id,"sourceName":ps.name,"url": price?.url ?: priceSource.website, "low":price?.low ?: "","median":price?.median ?: "","high":price?.high ?: ""]
 			} else {
 				for( def priceSource : PriceSource.list() ) {
 					ExpansionCardPrice price = ExpansionCardPrice.findByExpansionCardAndSource( expansionCard, priceSource )

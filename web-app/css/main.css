@@ -35,6 +35,10 @@ td.price {
 	padding: 1px 6px;
 }
 
+td.price#lowest {
+	background-color: greenyellow;
+}
+
 .fieldcontain br, .card-text br {
 	line-height: 150%;
 }
